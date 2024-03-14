@@ -1,0 +1,48 @@
+.calendar li{
+  color: #333;
+  width: calc(100% / 7);
+  font-size: 1.07rem;
+}
+.calendar .weeks li{
+  font-weight: 500;
+  cursor: default;
+  padding-bottom: 10px;
+}
+.calendar .days li{
+  z-index: 1;
+  cursor: pointer;
+  position: relative;
+  padding: 10px;
+}
+
+.days li.inactive{
+  color: #aaa;
+}
+.inactiveImg {
+  filter: grayscale(100%) brightness(70%) sepia(100%) saturate(0%);
+}
+.days li.active{
+  color:black;
+}
+.days li.activeSelected{
+    color: rgb(253, 253, 253);
+    background: #3d3b3b;
+    border-radius: 10%;
+}
+
+.days li::before{
+  position: absolute;
+  content: "";
+  left: 50%;
+  top: 50%;
+  width: 50px;
+  z-index: -1;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.active:hover{
+  background: #e7dfdf;
+  border-radius: 10%;
+}
