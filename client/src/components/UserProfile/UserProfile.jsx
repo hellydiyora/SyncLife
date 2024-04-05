@@ -1,8 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { logoutUser, selectUser, fetchUser } from "../../reducers/authSlice";
-import { useNavigate } from "react-router-dom";
-import moment from "moment";
+import React, { useState } from "react";
+import UserBar from "./UseBar";
 import JournalProgress from "./JournalProgress";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
@@ -18,177 +15,60 @@ const Progress = ({
 }) => {
   return (
     <div>
-      <h1 className="text-4xl font-mainTag mb-10">Progress</h1>
-      <ul className="grid grid-cols-4 gap-4">
-        <li className="bg-gray-300  rounded-md flex flex-col items-center p-10 gap-5">
-          <span className="text-2xl ">TaskMate</span>{" "}
-          <button
-            className="bg-gray-500 shadow-lg shadow-gray-500 p-2  rounded-md text-white hover:bg-gray-600 hover:shadow-gray-600 transition duration-300"
-            onClick={onJournalProgressClick}
-          >
-            See Progress
-          </button>
+      <ul className="grid min-[620px]:grid-cols-4 grid-cols-2 sm:text-lg userP:text-2xl md:text-xl gap-4">
+        <li className="bg-gray-300  rounded-md flex justify-center items-center p-5 cursor-pointer">
+          <span onClick={onJournalProgressClick} >
+            TaskMate
+          </span>{" "}
         </li>
-        <li className="bg-gray-300 rounded-md flex flex-col items-center p-10 gap-5">
-          <span className="text-2xl">GoalMinder</span>{" "}
-          <button
-            className="bg-gray-500 shadow-lg shadow-gray-500 p-2  rounded-md text-white hover:bg-gray-600 hover:shadow-gray-600 transition duration-300"
-            onClick={onHabitProgressClick}
-          >
-            See Progress
-          </button>
+        <li className="bg-gray-300 rounded-md flex justify-center items-center p-5 cursor-pointer">
+          <span onClick={onHabitProgressClick} >
+            GoalMinder
+          </span>{" "}
         </li>
-        <li className="bg-gray-300 rounded-md flex flex-col items-center p-10 gap-5">
-          <span className="text-2xl">GratiMemo</span>{" "}
-          <button
-            className="bg-gray-500 shadow-lg shadow-gray-500 p-2  rounded-md text-white hover:bg-gray-600 hover:shadow-gray-600 transition duration-300"
-            onClick={onGratiProgressClick}
-          >
-            See Progress
-          </button>
+        <li className="bg-gray-300 rounded-md flex justify-center items-center p-5  cursor-pointer">
+          <span onClick={onGratiProgressClick} >
+            GratiMemo
+          </span>{" "}
         </li>
-        <li className="bg-gray-300 rounded-md flex flex-col items-center p-10 gap-5">
-          <span className="text-2xl">EmoSense</span>
-          <button
-            className="bg-gray-500 shadow-lg shadow-gray-500 p-2  rounded-md text-white hover:bg-gray-600 hover:shadow-gray-600 transition duration-300"
-            onClick={onMoodProgressClick}
-          >
-            See Progress
-          </button>
+        <li className="bg-gray-300 rounded-md flex justify-center items-center p-5 cursor-pointer">
+          <span onClick={onMoodProgressClick} >
+            EmoSense
+          </span>
         </li>
       </ul>
     </div>
   );
 };
+
 const UserProfile = () => {
-  const [isJournalProgress, setIsJournalProgress] = useState(false);
-  const [isHabitProgress, setIsHabitProgress] = useState(false);
-  const [isGratiProgress, setIsGratiProgress] = useState(false);
-  const [isMoodProgress, setIsMoodProgress] = useState(false);
+  const [activeProgress, setActiveProgress] = useState("journal");
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const userData = useSelector((state) => state.auth.user);
-
-  const fetchU = useSelector(selectUser);
-
-  const getDetails = () => {
-    try {
-      const firstName = fetchU.firstName;
-      dispatch(fetchUser({ firstName }));
-    } catch (error) {
-      console.error("Error in fetching: ", error);
-    }
-  };
-
-  useEffect(() => {
-    getDetails();
-  }, [dispatch]);
-
-  const handleLogOut = async () => {
-    try {
-      await dispatch(logoutUser());
-      navigate("/");
-    } catch (error) {
-      console.log("Error in logging out: ", error);
-    }
-  };
-
-  const showJournalProgress = () => {
-    setIsJournalProgress(true);
-  };
-
-  const closeJournalProgress = () => {
-    setIsJournalProgress(false);
-  };
-
-  const showHabitProgress = () => {
-    setIsHabitProgress(true);
-  };
-
-  const closeHabitProgress = () => {
-    setIsHabitProgress(false);
-  };
-
-  const showGratiProgress = () => {
-    setIsGratiProgress(true);
-  };
-
-  const closeGratiProgress = () => {
-    setIsGratiProgress(false);
-  };
-
-  const showMoodProgress = () => {
-    setIsMoodProgress(true);
-  };
-
-  const closeMoodProgress = () => {
-    setIsMoodProgress(false);
+  const handleProgressClick = (progress) => {
+    setActiveProgress(progress);
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col ">
       <Navbar />
-      <div className="flex-grow bg-gray-100 flex ">
-        <div className="p-5 w-1/5 flex flex-col text-left items-center mx-auto bg-slate-200">
-          <h1 className="text-4xl font-mainTag mb-4 ">
-            {userData.firstName}'s data
-          </h1>
-          {userData && (
-            <div className="flex flex-col gap-1 p-5 border rounded bg-white shadow-md">
-              <p>
-                <span className="font-semibold">First Name:</span>{" "}
-                {userData.firstName}
-              </p>
-              <p>
-                <span className="font-semibold">Last Name:</span>{" "}
-                {userData.lastName}
-              </p>
-              <p>
-                <span className="font-semibold">Email:</span> {userData.email}
-              </p>
-              <p>
-                <span className="font-semibold">Birth Date:</span>{" "}
-                {moment(userData.birthDate).format("DD-MM-YYYY")}
-              </p>
-            </div>
-          )}
-
-          <button
-            onClick={handleLogOut}
-            className="mt-4 bg-red-500 text-white py-2 px-3 rounded hover:bg-red-600 transition duration-300 "
-          >
-            Log Out
-          </button>
-        </div>
-
-        {isJournalProgress ? (
-          <div className="w-4/5 p-5 flex flex-col">
-            <JournalProgress onClose={closeJournalProgress} />
-          </div>
-        ) : isHabitProgress ? (
-          <div className="w-4/5 p-5 flex flex-col ">
-            <HabitProgress onClose={closeHabitProgress} />
-          </div>
-        ) : isGratiProgress ? (
-          <div className="w-4/5 p-5 flex flex-col ">
-            <GratiProgress onClose={closeGratiProgress} />
-          </div>
-        ) : isMoodProgress ? (
-          <div className="w-4/5 p-5 flex flex-col">
-            <MoodProgress onClose={closeMoodProgress} />
-          </div>
-        ) : (
-          <div className="w-4/5 p-5 flex flex-col gap-5">
+      <div className="min-h-screen bg-gray-100 ">
+        <h1 className="font-mainTag text-5xl pt-5"> Progress</h1>
+        <div className="grid">
+          <div className="p-5 flex justify-center items-center gap-5">
             <Progress
-              onJournalProgressClick={showJournalProgress}
-              onHabitProgressClick={showHabitProgress}
-              onGratiProgressClick={showGratiProgress}
-              onMoodProgressClick={showMoodProgress}
+              onJournalProgressClick={() => handleProgressClick("journal")}
+              onHabitProgressClick={() => handleProgressClick("habit")}
+              onGratiProgressClick={() => handleProgressClick("grati")}
+              onMoodProgressClick={() => handleProgressClick("mood")}
             />
           </div>
-        )}
+          <div >
+            {activeProgress === "journal" && <JournalProgress />}
+            {activeProgress === "habit" && <HabitProgress />}
+            {activeProgress === "grati" && <GratiProgress />}
+            {activeProgress === "mood" && <MoodProgress />}
+          </div>
+        </div>
       </div>
       <Footer />
     </div>

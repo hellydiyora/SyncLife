@@ -1,5 +1,5 @@
 import React from 'react';
-import mainP from "../assets/images/signup3.jpg";
+import login from "../assets/images/login.jpg";
 import { useNavigate } from "react-router-dom";
 import { useState , useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -46,8 +46,8 @@ const LogIn = () => {
   }, [logInSuccess, error, navigate]);
 
   return (
-    <div className="flex">
-      <div className="h-screen w-6/12 bg-white p-6 flex items-center justify-center">
+    <div className="grid md:grid-cols-2 w-full  ">
+      <div className="h-screen bg-white p-6 flex items-center justify-center">
         <form
           className="gap-6 mt-8 bg-zinc-400 p-10 rounded-md shadow-xl"
           onSubmit={handleSubmit}
@@ -106,7 +106,7 @@ const LogIn = () => {
               type="submit"
               disabled={isLoading}
             >
-              Login
+               {isLoading ? "Logging in..." : "Log In"}
             </button>
           </div>
           {error && (
@@ -116,9 +116,9 @@ const LogIn = () => {
           )}
         </form>
       </div>
-      <div className="h-screen w-6/12 bg-zinc-100">
+      <div className="h-screen hidden md:block bg-zinc-100">
         <img
-          src={mainP}
+          src={login}
           alt="main image"
           className="object-cover h-full w-full"
         />

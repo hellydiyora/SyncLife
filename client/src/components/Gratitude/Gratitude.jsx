@@ -1,31 +1,50 @@
-import React from 'react';
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Footer from "../Home/Footer";
 import Navbar from "../Home/Navbar";
+import GratiCalender from "../Calendar/GratiCalender";
+import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../reducers/authSlice";
 import {
   addGratitude,
   fetchGratitudes,
   setGratitudes,
 } from "../../reducers/gratiSlice";
-import { selectUser } from "../../reducers/authSlice";
-import moment from "moment";
+import GratiDetails from "./GratiDetails";
+import ConfirmBox from "../ConfirmBox";
 
 const Gratitude = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [formData, setFormData] = useState({
     date: "",
-    greatfulFor: "",
-    lookingForward: "",
-    goodThings: "",
-    better: "",
+    entry: "",
+    file: null,
   });
-  const dispatch = useDispatch();
+  const [gratiDetailsVisible, setGratiDetailsVisible] = useState(false);
+  const [confirmBoxVisible, setConfirmBoxVisible] = useState(false);
+  const [confirmAddEntry, setConfirmAddEntry] = useState(false);
+  const [dataError, setDataError] = useState("");
+
+  const fileInputRef = useRef(null);
+
   const user = useSelector(selectUser);
   const gratitudes = useSelector((state) => state.gratitude.gratitudes);
-  const [searchDate, setSearchDate] = useState("");
+  const dispatch = useDispatch();
 
-  const handleDateChange = (e) => {
-    setSearchDate(e.target.value || "");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    setDataError("");
+  };
+
+  const handleFileChange = (e) => {
+    setFormData({
+      ...formData,
+      file: e.target.files[0],
+    });
   };
 
   const fetchAndSetGratitude = async () => {
@@ -43,202 +62,217 @@ const Gratitude = () => {
 
   useEffect(() => {
     fetchAndSetGratitude();
+    window.scroll({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
   }, [dispatch]);
 
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleUpload = async () => {
     try {
       if (user) {
+        const { date, entry, file } = formData;
+        const imageFile = file ? file : "blank.jpg";
+
         await dispatch(
           addGratitude({
-            date: formData.date,
-            greatfulFor: formData.greatfulFor,
-            lookingForward: formData.lookingForward,
-            goodThings: formData.goodThings,
-            better: formData.better,
+            date,
+            entry,
+            imageFile,
             userToken: user.token,
           })
         );
-      }
 
-      await fetchAndSetGratitude();
-      setFormData({
-        date: "",
-        greatfulFor: "",
-        lookingForward: "",
-        goodThings: "",
-        better: "",
-      });
+        setFormData({
+          date: "",
+          entry: "",
+          file: null,
+        });
+
+        fileInputRef.current.value = "";
+      }
+      fetchAndSetGratitude();
     } catch (error) {
-      console.error("Error in submitting habit:", error);
+      console.error("Error in submitting gratitude:", error);
     }
   };
+
+  const handleDateClick = (date) => {
+    setSelectedDate(date);
+    setGratiDetailsVisible(true);
+  };
+
+  const closeGratiDetails = () => {
+    setGratiDetailsVisible(false);
+    fetchAndSetGratitude();
+  };
+
+  useEffect(() => {
+    if (gratiDetailsVisible || confirmBoxVisible || confirmAddEntry) {
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "scroll";
+    }
+  }, [gratiDetailsVisible, confirmBoxVisible, confirmAddEntry]);
+
+  const handleConfirmCancel = () => {
+    setConfirmBoxVisible(false);
+    setFormData({
+      date: "",
+      entry: "",
+      file: null,
+    });
+  };
+
+  const handleConfirmChange = async () => {
+    setConfirmBoxVisible(false);
+    const { date, entry, file } = formData;
+    const imageFile = file ? file : "blank.jpg";
+    await dispatch(
+      addGratitude({
+        date,
+        entry,
+        imageFile,
+        userToken: user.token,
+      })
+    );
+
+    setFormData({
+      date: "",
+      entry: "",
+      file: null,
+    });
+
+    fileInputRef.current.value = "";
+    fetchAndSetGratitude();
+  };
+
+  const handleAddSubmit = (e) => {
+    e.preventDefault();
+    if (user) {
+      const { date } = formData;
+
+      if (!formData.date.trim()) {
+        setDataError("Date cannot be empty");
+        return;
+      }
+      const existingEntry = gratitudes.filter((gratitude) =>
+        moment(gratitude.date).isSame(date, "day")
+      );
+
+      if (existingEntry.length > 0) {
+        setConfirmBoxVisible(true);
+        return;
+      } else {
+        setConfirmAddEntry(true);
+      }
+    }
+  };
+  const handleAddConfirm = (e) => {
+    setConfirmAddEntry(false);
+    handleUpload();
+  };
+
+  const handleAddCancel = () => {
+    setConfirmAddEntry(false);
+    setFormData({
+      date: "",
+      entry: "",
+      file: null,
+    });
+  };
+
   return (
-    <div className="flex h-lvh flex-col">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="grid grid-cols-2 h-lvh p-10 gap-8 bg-gray-100 flex-grow ">
-        <div>
-          <h1 className="m-5 text-5xl font-serif text-slate-800">GratiMemo</h1>
-          <form
-            className="grid gap-3 items-center justify-center"
-            onSubmit={handleSubmit}
-          >
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <label className="text-left">Today's date is:</label>
-                <input
-                  type="date"
-                  name="date"
-                  placeholder="date.."
-                  value={formData.date}
-                  onChange={handleInputChange}
-                  className="p-2"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <label className="text-left">I'm greatful for:</label>
-                <input
-                  type="text"
-                  name="greatfulFor"
-                  placeholder="Type something.."
-                  value={formData.greatfulFor}
-                  onChange={handleInputChange}
-                  className="p-2"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <label className="text-left">I'm looking forward to:</label>
-                <input
-                  type="text"
-                  name="lookingForward"
-                  placeholder="Type something.."
-                  value={formData.lookingForward}
-                  onChange={handleInputChange}
-                  className="p-2"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <label className="text-left">Good thing about today was:</label>
-                <input
-                  type="text"
-                  name="goodThings"
-                  placeholder="Type something.."
-                  value={formData.goodThings}
-                  onChange={handleInputChange}
-                  className="p-2"
-                  required
-                />
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <label className="text-left">
-                Three things to make better is:
-              </label>
-              <input
-                type="text"
-                id="better"
-                name="better"
-                placeholder="e.g., First, Second, Third"
-                value={formData.better}
-                onChange={handleInputChange}
-                className="p-2"
-                required
-              />
-            </div>
-            <div>
-              <button className="bg-slate-300 shadow-md shadow-slate-400 px-3 py-2 rounded-md m-4">
-                Submit
-              </button>
-            </div>
-          </form>
-        
-        </div>
-        <div className=" flex flex-col items-center ">
-          <div className="bg-slate-300 bg-opacity-40 py-5 px-10 mt-10 flex gap-3 justify-center items-center rounded-md ">
-            <p className="text-2xl font-serif">Search entry for :</p>
-            <form>
-              <input
-                type="date"
-                name="searchDate"
-                className="p-2"
-                value={searchDate}
-                onChange={handleDateChange}
-              />
-            </form>
+      <div className="bg-gray-100">
+        <h1 className="mt-5 text-4xl galaxyF:text-5xl font-mainTag text-slate-800">GratiMemo</h1>
+        <div className="grid grid-cols-1 lg:grid-cols-2 h-full gap-10 justify-items-center">
+          <div className="pt-5 galaxyF:p-10">
+            <GratiCalender
+              onDateClick={handleDateClick}
+              selectedDate={selectedDate}
+            />
           </div>
+          <div className="flex flex-col justify-center items-center pb-10">
+            <div className="cardBG  p-8 w-3/4 rounded-lg">
+              <span>
+                <h2 className="font-subTag font-bold text-2xl galaxyF:text-3xl text-slate-700 mb-4">
+                  <p>Enter your HAPPY Moment</p>
+                </h2>
+              </span>
+              <form className="flex flex-col gap-4" onSubmit={handleAddSubmit}>
+                <label>
+                  <span className="text-base galaxyF:text-lg font-semibold text-gray-900">
+                    Select date:
+                  </span>
 
-          {searchDate &&
-          gratitudes &&
-          gratitudes.filter((gratitude) =>
-            moment(gratitude.date).isSame(moment(searchDate), "day")
-          ).length === 0 ? (
-            <p>No entries available</p>
-          ) : (
-            <div>
-              <ul>
-                {gratitudes
-                  .filter((gratitude) =>
-                    moment(gratitude.date).isSame(moment(searchDate), "day")
-                  )
-                  .map((filteredGratitude) => (
-                    <li
-                      key={filteredGratitude._id}
-                      className="mt-6 text-lg bg-slate-300 p-10 rounded-md bg-opacity-40"
-                    >
-                      <div>
-                        <strong>
-                          Entry for{" "}
-                          <span className="text-sky-600">
-                            {moment(filteredGratitude.date).format(
-                              "DD-MM-YYYY"
-                            )}{" "}
-                          </span>
-                          is:
-                        </strong>
-                      </div>
-                      <div>
-                        <span className="font-medium">
-                          You were greatful for:{" "}
-                        </span>{" "}
-                        {filteredGratitude.greatfulFor}
-                      </div>
-                      <div>
-                        <span className="font-medium">
-                          You were looking forward to:{" "}
-                        </span>
-                        {filteredGratitude.lookingForward}
-                      </div>
-                      <div>
-                        <span className="font-medium">
-                          Good thing about that day was:{" "}
-                        </span>
-                        {filteredGratitude.goodThings}
-                      </div>
-                      <div>
-                        <span className="font-medium">
-                          Things to make better is:{" "}
-                        </span>
-
-                        {filteredGratitude.better}
-                      </div>
-                    </li>
-                  ))}
-              </ul>
+                  <input
+                    className="border-2 border-gray-200 w-full p-2 shadow-md shadow-slate-500 rounded-md  placeholder-slate-900"
+                    type="date"
+                    name="date"
+                    onChange={handleChange}
+                    value={formData.date}
+                  />
+                </label>
+                {dataError && (
+                  <p className="text-red-500 text-sm">{dataError}</p>
+                )}
+                <label>
+                  <span className="text-base galaxyF:text-lg font-semibold text-gray-900">
+                    Enter your entry:
+                  </span>
+                  <input
+                    className="border-2 border-gray-200 w-full p-2 shadow-md shadow-slate-500 rounded-md  placeholder-slate-900"
+                    type="text"
+                    name="entry"
+                    placeholder="I am greatful for...."
+                    onChange={handleChange}
+                    value={formData.entry}
+                  />
+                </label>
+                <label>
+                  <span className="text-base galaxyF:text-lg font-semibold text-gray-900">
+                    Attach Image:
+                  </span>
+                  <input
+                    className="border-2 border-gray-200 bg-white w-full p-2 shadow-md shadow-slate-500 rounded-md  placeholder-slate-900"
+                    type="file"
+                    onChange={handleFileChange}
+                    ref={fileInputRef}
+                  />
+                </label>
+                <div>
+                  <button
+                    type="submit"
+                    className="bg-slate-600 mt-5 text-white shadow-md shadow-black hover:bg-stone-400  py-3 px-6 rounded-md transition duration-300 ease-in-out"
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
             </div>
+          </div>
+          {selectedDate && gratiDetailsVisible && (
+            <GratiDetails date={selectedDate} onClose={closeGratiDetails} />
           )}
         </div>
       </div>
       <Footer />
+      <ConfirmBox
+        visible={confirmAddEntry}
+        message="Are you sure?"
+        onCancel={handleAddCancel}
+        onConfirm={handleAddConfirm}
+      />
+      <ConfirmBox
+        visible={confirmBoxVisible}
+        message=" An entry already exists for this date. Do you want to change the
+              existing entry?"
+        onCancel={handleConfirmCancel}
+        onConfirm={handleConfirmChange}
+      />
     </div>
   );
 };

@@ -33,29 +33,41 @@ export const fetchGratitudes = createAsyncThunk(
 
 export const addGratitude = createAsyncThunk(
   "gratitude/addGratitude",
-  async ({
-    date,
-    greatfulFor,
-    lookingForward,
-    goodThings,
-    better,
-    userToken,
-  }) => {
-    
+  async ({ date , entry, imageFile, userToken }) => {
     try {
-      await axiosNew.post(
-        "/gratitude",
-        {
-            date, greatfulFor, lookingForward, goodThings, better
-        },
-        {
-          headers: { Authorization: `Bearer ${userToken}` },
-        }
-      );
+      const formData = new FormData();
+      formData.append("date", date);
+      formData.append("entry", entry);
+      formData.append("file", imageFile);
 
-      return { date, greatfulFor, lookingForward, goodThings, better };
+      const response = await axiosNew.post("/gratitude", formData, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return response.data;
     } catch (error) {
-      console.error("Error in adding gratitudes:", error);
+      console.error("Error in adding gratitude:", error);
+      throw error;
+    }
+  }
+);
+
+export const deleteGratitude = createAsyncThunk(
+  "list/deleteGratitude",
+  async ({ newDate, userToken }) => {
+    try {
+   
+      await axiosNew.delete("/gratitude", {
+        headers: { Authorization: `Bearer ${userToken}` },
+        data: { newDate },
+      });
+
+      return { newDate};
+    } catch (error) {
+      console.error("Error in deleting list:", error);
       throw error;
     }
   }

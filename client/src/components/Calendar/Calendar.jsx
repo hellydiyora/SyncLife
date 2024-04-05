@@ -47,9 +47,9 @@ const Calendar = ({ onDateClick, selectedDate }) => {
   const lastDateOfLastMonth = new Date(currYear, currMonth, 0).getDate();
 
   return (
-    <div className="w-[420px] bg-white rounded-md shadow-md flex flex-col p-3">
-      <header className="flex justify-between py-7 px-14 items-center">
-        <p className="text-3xl font-semibold">{`${months[currMonth]} ${currYear}`}</p>
+    <div className="w-[250px] galaxyF:w-[320px] bg-white rounded-md shadow-md flex flex-col p-3">
+      <header className="grid grid-cols-2 p-2 items-center gap-20">
+        <p className="text-[20px] galaxyF:text-[25px] sm:text-3xl font-semibold">{`${months[currMonth]} ${currYear}`}</p>
         <div className="flex text-gray-600 h-9 w-9 cursor-pointer items-center justify-center text-center gap-4 ">
           <span
             onClick={() => handlePrevNext(-1)}
@@ -65,8 +65,8 @@ const Calendar = ({ onDateClick, selectedDate }) => {
           </span>
         </div>
       </header>
-      <div className="calendar p-2">
-        <ul className="weeks flex flex-wrap list-none text-center">
+      <div className="flex flex-col  ">
+      <ul className="weeks grid grid-cols-7 gap-5 list-none text-center justify-items-center pb-5">
           <li>Sun</li>
           <li>Mon</li>
           <li>Tue</li>
@@ -75,9 +75,9 @@ const Calendar = ({ onDateClick, selectedDate }) => {
           <li>Fri</li>
           <li>Sat</li>
         </ul>
-        <ul className="days flex flex-wrap list-none text-center">
+        <ul className="days grid grid-cols-7  gap-5 list-none text-center">
           {[...Array(firstDayOfMonth)].map((_, index) => (
-            <li key={`inactive-${index}`} className="inactive w-1/7">
+            <li key={`inactive-${index}`} className="text-gray-400">
             {lastDateOfLastMonth - firstDayOfMonth + index + 1}
             </li>
           ))}
@@ -86,7 +86,7 @@ const Calendar = ({ onDateClick, selectedDate }) => {
             <li
               key={`active-${index}`}
               className={
-                selectedDate  && selectedDate.getDate() === index + 1 ? "activeSelected" : "active "
+                selectedDate  && selectedDate.getDate() === index + 1 ? "underline font-extrabold" : "active "
               }
               onClick={() =>
                 onDateClick(new Date(currYear, currMonth, index + 1))

@@ -5,21 +5,11 @@ const gratitudeSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  greatfulFor: {
-    type: String,
-    required: true,
+  entry:{
+    type:String,
   },
-  lookingForward: {
-    type: String,
-    required: true,
-  },
-  goodThings: {
-    type: String,
-    required: true,
-  },
-  better:{
-        type: String,
-        required: true,
+  image:{
+    type:String,
   },
   user_id: {
     type:String,
@@ -27,6 +17,6 @@ const gratitudeSchema = mongoose.Schema({
 },
 });
 
-const Gratitude = mongoose.model("Gartitude", gratitudeSchema);
+const Gratitude = mongoose.model("Gratitude", gratitudeSchema);
 
 module.exports = Gratitude;

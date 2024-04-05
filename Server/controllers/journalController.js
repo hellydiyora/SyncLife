@@ -37,10 +37,10 @@ const addList = async (req, res) => {
 
 const deleteList = async (req, res) => {
   const { id } = req.params;
-  const { dataId } = req.body;
+  const { selecteddataId } = req.body;
 
   try {
-    const data = await Journal.findOne({ _id: dataId });
+    const data = await Journal.findOne({ _id: selecteddataId });
     if (!data) {
       return res.status(404).json({ message: "Journal not found" });
     }
@@ -48,7 +48,7 @@ const deleteList = async (req, res) => {
     data.data = data.data.filter((item) => item._id.toString() !== id);
 
     if (data.data.length === 0) {
-      await Journal.findByIdAndDelete(dataId);
+      await Journal.findByIdAndDelete(selecteddataId);
       return res.json({ message: "Document deleted successfully" });
     }
 
@@ -65,10 +65,14 @@ const updateList = async (req, res) => {
 
   try {
     const data = await Journal.findOne({ _id: dataId });
+    
     if (!data) {
       return res.status(404).json({ message: "List not found" });
     }
 
+    if (!data.data) {
+      return res.status(404).json({ message: "Data not found in list" });
+    }
     
     const list = data.data.find((item) => item._id.toString() === id);
 
@@ -94,13 +98,13 @@ const completeList = async (req, res) => {
   const { dataId } = req.body;
 
   try {
-    const data = await Journal.findOne({ _id: dataId });
+    const journal = await Journal.findOne({ _id: dataId });
 
-    if (!data) {
+    if (!journal) {
       return res.status(404).json({ message: "Journal not found" });
     }
 
-    const list = data.data.find((item) => item._id.toString() === id);
+    const list = journal.data.find((item) => item._id.toString() === id);
 
     if (!list) {
       return res.status(404).json({ message: "List not found" });
@@ -114,9 +118,9 @@ const completeList = async (req, res) => {
     } else {
       list.isCompleted = true;
 
-      data.markModified("data");
+      journal.markModified("data");
 
-      await data.save();
+      await journal.save();
     }
 
     res.json({

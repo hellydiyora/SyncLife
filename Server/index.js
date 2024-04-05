@@ -14,6 +14,8 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
+app.use('/' , express.static('assets'));
+
 mongoose.connect("mongodb://127.0.0.1:27017/planner", { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use('/journal', journalRoutes);

@@ -1,4 +1,5 @@
 const Mood = require("../models/Mood");
+const moment = require("moment");
 
 const fetchMoodData = async (req, res) => {
   try {
@@ -12,13 +13,15 @@ const fetchMoodData = async (req, res) => {
 
 const createMoodData = async (req, res) => {
   try {
-    const { date, feeling , activity } = req.body;
+    const { date, feeling, activity } = req.body;
+    console.log(feeling)
     const user_id = req.user._id;
 
     const dateExist = await Mood.findOne({ user_id, date });
 
     if (dateExist) {
-      dateExist.feeling = feeling;
+      dateExist.feeling.value = feeling.value;
+      dateExist.feeling.image = feeling.image;
       dateExist.activity = activity;
       await dateExist.save();
       res.status(200).json(dateExist);
@@ -39,4 +42,22 @@ const createMoodData = async (req, res) => {
   }
 };
 
-module.exports = { fetchMoodData, createMoodData };
+const deleteMoodData = async (req, res) => {
+  const { date } = req.body;
+  const user_id = req.user._id;
+  
+
+  try {
+    const data = await Mood.findOneAndDelete({ user_id, date });
+   
+    if (!data) {
+      return res.status(404).json({ message: "Entry not found" });
+    }
+
+    res.json({ message: "Entry deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { fetchMoodData, createMoodData, deleteMoodData };

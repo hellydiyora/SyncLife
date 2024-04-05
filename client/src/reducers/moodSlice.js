@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosNew from "./axioInstance";
-import axios from "axios";
+
 export const moodSlice = createSlice({
   name: "mood",
   initialState: {
@@ -50,6 +50,24 @@ export const addMoodData = createAsyncThunk(
       return {  date, feeling , activity };
     } catch (error) {
       console.error("Error in adding mood data: ", error);
+    }
+  }
+);
+
+export const deleteEntry = createAsyncThunk(
+  "list/deleteEntry",
+  async ({ date, userToken }) => {
+    try {
+   
+      await axiosNew.delete("/mood", {
+        headers: { Authorization: `Bearer ${userToken}` },
+        data: { date },
+      });
+
+      return { date};
+    } catch (error) {
+      console.error("Error in deleting list:", error);
+      throw error;
     }
   }
 );

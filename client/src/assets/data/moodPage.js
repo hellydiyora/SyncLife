@@ -81,7 +81,7 @@ export const food = [
 ];
 
 export const health = [
-  { value: "Depression", image: depression },
+  { value: "Depress", image: depression },
   { value: "Anxiety", image: anxiety },
   { value: "Headache", image: headache },
   { value: "Periods", image: period },

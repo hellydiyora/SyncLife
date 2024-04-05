@@ -2,32 +2,30 @@ const User = require("../models/Users");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
-require('dotenv').config();
+require("dotenv").config();
 
 const secret = process.env.SECRET_KEY;
 
 const createToken = (_id) => {
-  return jwt.sign({_id} , secret , {expiresIn: "3d"})
-}
+  return jwt.sign({ _id }, secret, { expiresIn: "3d" });
+};
 
 const signup = async (req, res) => {
   try {
     const { firstName, lastName, email, birthDate, password } = req.body;
-  
-    if(!firstName || !lastName || !email || !birthDate || !password){
+
+    if (!firstName || !lastName || !email || !birthDate || !password) {
       throw Error("All fields must be filled.");
     }
 
-    if(!validator.isEmail(email))
-    {
+    if (!validator.isEmail(email)) {
       throw Error("Email is not valid");
     }
 
-    if(!validator.isStrongPassword(password))
-    {
+    if (!validator.isStrongPassword(password)) {
       throw Error("Password is not strong enough");
     }
-    
+
     const currentDate = new Date();
     const userBirthDate = new Date(birthDate);
     const age = currentDate.getFullYear() - userBirthDate.getFullYear();
@@ -41,63 +39,67 @@ const signup = async (req, res) => {
     }
 
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password , salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await User.create({firstName , lastName , birthDate , email , password: hashedPassword });
+    const user = await User.create({
+      firstName,
+      lastName,
+      birthDate,
+      email,
+      password: hashedPassword,
+    });
 
     const token = createToken(user._id);
 
-    res.status(200).json({ firstName , token });
+    res.status(200).json({ email, token });
   } catch (error) {
-    res.status(500).json({ error:error.message});
+    res.status(500).json({ error: error.message });
   }
 };
 
 const login = async (req, res) => {
-  try{
-    const {email , password} = req.body;
+  try {
+    const { email, password } = req.body;
 
-    if(!email || !password){
+    if (!email || !password) {
       throw Error("All fields must be filled");
     }
 
-    const user = await User.findOne({email});
+    const user = await User.findOne({ email });
 
-    if(!user)
-    {
+    if (!user) {
       throw Error("Email does not exist");
     }
 
-    const match = await bcrypt.compare(password , user.password);
+    const match = await bcrypt.compare(password, user.password);
 
-    if(!match){
+    if (!match) {
       throw Error("Incorrect Password");
     }
 
-    const token = createToken(user._id)
+    const token = createToken(user._id);
 
-    res.status(200).json({firstName:user.firstName , token})
-
-  }catch(error){
-    res.status(500).json({error:error.message});
+    res.status(200).json({ email, token });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
 const getUser = async (req, res) => {
-    const {firstName} = req.query;
-    try {
-          const userData = await User.findOne({firstName});
-      
-          if (!userData) {
-            return res.status(404).json({ error: "User not found" });
-          }
-      
-          res.json(userData);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+  const { email } = req.query;
+
+  try {
+    const userData = await User.findOne({ email });
+
+    if (!userData) {
+      return res.status(404).json({ error: "User not found" });
     }
-  };
-  
-  
-  module.exports = {getUser , signup, login };
+
+    res.json(userData);
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { getUser, signup, login };

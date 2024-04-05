@@ -92,12 +92,12 @@ export const toggleCompletion = createAsyncThunk(
   "habits/toggleCompletion",
   async ({ habitId, date, userToken }) => {
     try {
-      const response = await axiosNew.post(
+      await axiosNew.post(
         `/habits/${habitId}`,
         { date },
         { headers: { Authorization: `Bearer ${userToken}` } }
       );
-      return response;
+      return { habitId, date };
     } catch (error) {
       console.error("Error in Completion: ", error);
     }

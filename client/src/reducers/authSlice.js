@@ -115,9 +115,9 @@ export const selectUser = createSelector(
 
 export const fetchUser = createAsyncThunk(
   "auth/fetchUser",
-  async ({ firstName }) => {
+  async ({ email }) => {
     try {
-      const response = await axiosNew.get("/user", { params: { firstName } });
+      const response = await axiosNew.get("/user", { params: { email } });
       return response.data;
     } catch (error) {
       console.error("Error fetching data:", error);

@@ -6,7 +6,7 @@ import moodT from '../images/mood.png';
 const data = [
   {
     title: "TaskMate",
-    description: "Just check off the things you finish!",
+    description: "Just check off the things that you finish!",
     image: journal,
     link: "/journal",
   },

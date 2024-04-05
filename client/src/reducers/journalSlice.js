@@ -55,15 +55,16 @@ export const addList = createAsyncThunk(
 
 export const deleteList = createAsyncThunk(
   "list/deleteList",
-  async ({ dataId, listId, userToken }) => {
+  async ({ selecteddataId, selectedListId, userToken }) => {
+   
     try {
 
-      await axiosNew.delete(`/journal/${listId}`, {
+      await axiosNew.delete(`/journal/${selectedListId}`, {
         headers: { Authorization: `Bearer ${userToken}` },
-        data: { dataId },
+        data: { selecteddataId },
       });
 
-      return { dataId, listId };
+      return { selecteddataId, selectedListId };
     } catch (error) {
       console.error("Error in deleting list:", error);
       throw error;
@@ -100,7 +101,7 @@ export const listCompleted = createAsyncThunk(
       );
       return {dataId , listId};
     } catch (error) {
-      console.error("Error completing list:", error);
+      console.error("Error completing list is that:", error);
       throw error;
     }
   }

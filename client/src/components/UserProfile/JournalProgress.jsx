@@ -11,7 +11,7 @@ import { MenuItem } from "@mui/material";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const JournalProgress = ({ onClose }) => {
+const JournalProgress = () => {
   const lists = useSelector((state) => state.list.lists);
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
@@ -242,13 +242,13 @@ const JournalProgress = ({ onClose }) => {
     toggleView(event.target.value);
   };
   return (
-    <div >
-      <h1 className="text-4xl underline decoration-1 font-serif mb-6">
-        Progress in TaskMate
+    <div>
+      <h1 className="text-5xl underline decoration-1 font-subTag mb-2">
+        TaskMate
       </h1>
-      <div className="flex flex-col min-h-96 items-center bg-gray-200 mb-10">
-        <div className="py-7 px-2 rounded-md flex items-center gap-6">
-          <div className="flex items-center">
+      <div className="flex flex-col min-h-96 items-center mb-10">
+        <div className="py-7 px-2 rounded-md flex-col sm:flex-row items-center gap-6">
+          <div className="flex flex-col galaxyF:flex-row items-center">
             {" "}
             <p className="pr-3 text-lg font-sans">Search data for:</p>
             <input
@@ -261,12 +261,11 @@ const JournalProgress = ({ onClose }) => {
 
           <Select
             onChange={handleChange}
-            
             style={{
               color: "black",
               backgroundColor: "inherit",
               height: "44px",
-              fontSize:"20px"
+              fontSize: "20px",
             }}
             sx={{
               "& fieldset": { border: "none" },
@@ -310,7 +309,6 @@ const JournalProgress = ({ onClose }) => {
                 color: "black",
                 backgroundColor: " rgb(231 229 228)",
                 height: "44px",
-                width:"150px"
               }}
             >
               Yearly View
@@ -319,56 +317,82 @@ const JournalProgress = ({ onClose }) => {
         </div>
         {view === "yearly" ? (
           <div className=" flex flex-col items-center">
-            <h1 className="text-2xl font-mono">Analysis of this YEAR</h1>
-            <p>Total task : {yearlyTotalTask}</p>
-            <div className="w-80 my-4">
-              <Pie data={yearData} />
-            </div>
+            {yearlyTotalTask === 0 ? (
+              <p>No data available</p>
+            ) : (
+              <div>
+                <h1 className="text-2xl font-mono">Analysis of this YEAR</h1>
+                <p>Total task : {yearlyTotalTask}</p>
+                <div className="w-60 galaxyF:w-80  my-4">
+                  <Pie data={yearData} />
+                </div>
+              </div>
+            )}
           </div>
         ) : view === "monthly" ? (
           <div className="flex flex-col items-center">
-            <h1 className="text-2xl font-mono">Analysis of this MONTH</h1>
-            <p>Total task : {totalMonthlytask}</p>
-            <div className="w-80 my-4">
-              <Pie data={monthData} />
-            </div>
+            {totalMonthlytask === 0 ? (
+              <p>No data available</p>
+            ) : (
+              <div>
+                <h1 className="text-2xl font-mono">Analysis of this MONTH</h1>
+                <p>Total task : {totalMonthlytask}</p>
+                <div className="w-60 galaxyF:w-80  my-4">
+                  <Pie data={monthData} />
+                </div>
+              </div>
+            )}
           </div>
         ) : view === "weekly" ? (
           <div className="flex flex-col items-center">
-            <h1 className="text-2xl font-mono">Analysis of a WEEK</h1>
-            <p>Total task : {totalweektask}</p>
-            <div className="w-80 my-4">
-              <Pie data={weekData} />
-            </div>
+            {totalweektask === 0 ? (
+              <p>No data available</p>
+            ) : (
+              <div>
+                {" "}
+                <h1 className="text-2xl font-mono">Analysis of a WEEK</h1>
+                <p>Total task : {totalweektask}</p>
+                <div className="w-60 galaxyF:w-80  my-4">
+                  <Pie data={weekData} />
+                </div>
+              </div>
+            )}
           </div>
         ) : view === "daily" ? (
           <div className="flex flex-col items-center">
-            <h1 className="text-2xl font-mono">Today's data</h1>
-            <p>Total task : {totalTasksToday} </p>
-            <div className="w-80 my-4">
-              <Pie data={dailyData} />
-            </div>
+            {totalTasksToday === 0 ? (
+              <p>No data available</p>
+            ) : (
+              <div>
+                <h1 className="text-2xl font-mono">Today's data</h1>
+                <p>Total task : {totalTasksToday} </p>
+                <div className="w-60 galaxyF:w-80 my-4">
+                  <Pie data={dailyData} />
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           view === "search" && (
             <div className="flex flex-col items-center">
-              <h1 className="text-2xl font-mono">
-                Tasks on {moment(selectedDate).format("MMMM D, YYYY")}
-              </h1>
-              <p>Total task: {totalSelectedDateTasks}</p>
-              <div className="w-80 my-4">
-                <Pie data={selectedDateData} />
-              </div>
+              {totalSelectedDateTasks === 0 ? (
+                <p>No data available</p>
+              ) : (
+                <div>
+                  <h1 className="text-2xl font-mono">
+                    Tasks on {moment(selectedDate).format("MMMM D, YYYY")}
+                  </h1>
+                  <p>Total task: {totalSelectedDateTasks}</p>
+                  <div className="w-60 galaxyF:w-80 my-4">
+                    <Pie data={selectedDateData} />
+                  </div>
+                </div>
+              )}
             </div>
           )
         )}
       </div>
-      <button
-        onClick={onClose}
-        className="bg-slate-200 shadow-lg shadow-slate-400 p-2 rounded-md mt-2 text-black"
-      >
-        Back to progress page
-      </button>
+     
     </div>
   );
 };
