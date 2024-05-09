@@ -248,7 +248,7 @@ const JournalProgress = () => {
       </h1>
       <div className="flex flex-col min-h-96 items-center mb-10">
         <div className="py-7 px-2 rounded-md flex-col sm:flex-row items-center gap-6">
-          <div className="flex flex-col galaxyF:flex-row items-center">
+          <div className="flex flex-col signup:flex-row items-center">
             {" "}
             <p className="pr-3 text-lg font-sans">Search data for:</p>
             <input
@@ -323,7 +323,7 @@ const JournalProgress = () => {
               <div>
                 <h1 className="text-2xl font-mono">Analysis of this YEAR</h1>
                 <p>Total task : {yearlyTotalTask}</p>
-                <div className="w-60 galaxyF:w-80  my-4">
+                <div className="w-60 signup:w-80  my-4">
                   <Pie data={yearData} />
                 </div>
               </div>
@@ -337,7 +337,7 @@ const JournalProgress = () => {
               <div>
                 <h1 className="text-2xl font-mono">Analysis of this MONTH</h1>
                 <p>Total task : {totalMonthlytask}</p>
-                <div className="w-60 galaxyF:w-80  my-4">
+                <div className="w-60 signup:w-80  my-4">
                   <Pie data={monthData} />
                 </div>
               </div>
@@ -352,7 +352,7 @@ const JournalProgress = () => {
                 {" "}
                 <h1 className="text-2xl font-mono">Analysis of a WEEK</h1>
                 <p>Total task : {totalweektask}</p>
-                <div className="w-60 galaxyF:w-80  my-4">
+                <div className="w-60 signup:w-80  my-4">
                   <Pie data={weekData} />
                 </div>
               </div>
@@ -366,7 +366,7 @@ const JournalProgress = () => {
               <div>
                 <h1 className="text-2xl font-mono">Today's data</h1>
                 <p>Total task : {totalTasksToday} </p>
-                <div className="w-60 galaxyF:w-80 my-4">
+                <div className="w-60 signup:w-80 my-4">
                   <Pie data={dailyData} />
                 </div>
               </div>
@@ -383,7 +383,7 @@ const JournalProgress = () => {
                     Tasks on {moment(selectedDate).format("MMMM D, YYYY")}
                   </h1>
                   <p>Total task: {totalSelectedDateTasks}</p>
-                  <div className="w-60 galaxyF:w-80 my-4">
+                  <div className="w-60 signup:w-80 my-4">
                     <Pie data={selectedDateData} />
                   </div>
                 </div>

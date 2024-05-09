@@ -14,7 +14,6 @@ const fetchMoodData = async (req, res) => {
 const createMoodData = async (req, res) => {
   try {
     const { date, feeling, activity } = req.body;
-    console.log(feeling)
     const user_id = req.user._id;
 
     const dateExist = await Mood.findOne({ user_id, date });

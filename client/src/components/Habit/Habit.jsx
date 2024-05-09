@@ -244,6 +244,7 @@ const Habit = () => {
       habitId: null,
     });
     setUpdateError("");
+    setUpdateFormVisible(false);
   };
 
   const handleUpdateClick = (e) => {
@@ -259,20 +260,20 @@ const Habit = () => {
         updateHabit.startDate === habitUpdate.startDate &&
         updateHabit.endDate === habitUpdate.endDate
       ) {
-        setUpdateError("No chnages made");
+        setUpdateError("No changes made");
         return;
       }
     }
     setUpdateConfirm(true);
   };
-
+  const today = moment();
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <div className="grid grid-cols-1 md:grid-cols-2 h-full p-10 gap-8 bg-gray-100 flex-grow ">
         <div className="flex flex-col items-center">
           <span>
-            <h2 className="text-4xl galaxyF:text-5xl mb-4 font-mainTag text-slate-900">
+            <h2 className="text-4xl signup:text-5xl mb-4 font-mainTag text-slate-900">
               <span className="text-slate-950 ">G</span>oal
               <span className="text-slate-950 ">M</span>inder
             </h2>
@@ -410,18 +411,20 @@ const Habit = () => {
           {habits && habits.length === 0 ? (
             <p className="text-gray-500 text-lg">No data available</p>
           ) : (
-            <ul className="grid gap-4 2xl:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-1 galaxyF:grid-cols-2 ">
+            <div>
+            <ul className="grid gap-4 2xl:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-1 signup:grid-cols-2 ">
               {habits &&
-                habits.map((habit) => (
+                habits.filter((data) => moment(data.endDate).isAfter(today))
+                .map((habit) => (
                   <li
                     key={habit._id}
-                    className="w-52 galaxyF:w-auto bgHabit m-2 rounded-md p-4 shadow-sm shadow-black"
+                    className="w-52 signup:w-auto bgHabit m-2 rounded-md p-4 shadow-sm shadow-black"
                   >
                     <div className="flex flex-col justify-center gap-5">
                       <span className="text-4xl font-subTag text-gray-700 capitalize">
                         {habit.name}
                       </span>
-                      <span className="flex flex-col galaxyF:flex-col xl:flex-row justify-center gap-3">
+                      <span className="flex flex-col signup:flex-col xl:flex-row justify-center gap-3">
                         <button
                           className="btnH  p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
                           onClick={() => showHabitDetails(habit)}
@@ -445,6 +448,44 @@ const Habit = () => {
                   </li>
                 ))}
             </ul>
+            <p className="p-2 text-lg text-gray-500">Expired Habits</p>
+            <ul className="grid gap-4 2xl:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-1 signup:grid-cols-2 ">
+              {habits &&
+                habits.filter((data) => moment(data.endDate).isBefore(today))
+                .map((habit) => (
+                  <li
+                    key={habit._id}
+                    className="w-52 signup:w-auto bgHabitExpired m-2 rounded-md p-4 shadow-sm shadow-black"
+                  >
+                    <div className="flex flex-col justify-center gap-5">
+                      <span className="text-4xl font-subTag text-gray-600 capitalize">
+                        {habit.name}
+                      </span>
+                      <span className="flex flex-col signup:flex-col xl:flex-row justify-center gap-3 ">
+                        <button
+                          className="btnH text-gray-600  p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                          onClick={() => showHabitDetails(habit)}
+                        >
+                          Status
+                        </button>
+                        <button
+                          className="btnH text-gray-600 p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                          onClick={() => handleDeleteClick(habit._id)}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          className="btnH text-gray-600 p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                          onClick={() => handleUpdateButtonClick(habit)}
+                        >
+                          Update
+                        </button>
+                      </span>
+                    </div>
+                  </li>
+                ))}
+            </ul>
+            </div>
           )}
         </div>
         {habitDetailsVisible && (

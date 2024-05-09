@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import login from "../assets/images/login.jpg";
-import { useNavigate } from "react-router-dom";
-import { useState , useEffect } from "react";
+import {Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../reducers/authSlice";
 
@@ -16,7 +16,7 @@ const LogIn = () => {
   const dispatch = useDispatch();
 
   const handleRedirect = () => {
-    dispatch({type: "auth/clearError"});
+    dispatch({ type: "auth/clearError" });
     navigate("/signup");
   };
 
@@ -35,11 +35,12 @@ const LogIn = () => {
       console.error("Login error:", error);
     }
   };
+  
   useEffect(() => {
     if (logInSuccess && !error) {
       navigate("/home");
-      setLogInSuccess(false); 
-    }else if (error) {
+      setLogInSuccess(false);
+    } else if (error) {
       console.error("LogIn error:", error);
       setLogInSuccess(false);
     }
@@ -49,7 +50,7 @@ const LogIn = () => {
     <div className="grid md:grid-cols-2 w-full  ">
       <div className="h-screen bg-white p-6 flex items-center justify-center">
         <form
-          className="gap-6 mt-8 bg-zinc-400 p-10 rounded-md shadow-xl"
+          className=" mt-8 bg-zinc-400 p-10 rounded-md shadow-xl"
           onSubmit={handleSubmit}
         >
           <div>
@@ -88,25 +89,33 @@ const LogIn = () => {
             />
           </div>
 
-          <div className="col-span-2">
-            <p
-              className="text-sm text-black dark:text-gray-200 mb-2"
-              onClick={handleRedirect}
-            >
+          <div>
+            <p className="text-sm text-black dark:text-gray-200 mb-2">
               Don't Have an Account ?{" "}
-              <a href="#" className="text-blue-950 underline decoration-solid">
+              <a
+                href="#"
+                className="text-blue-950 underline decoration-solid"
+                onClick={handleRedirect}
+              >
                 Sign in here
               </a>
             </p>
           </div>
-
+          <div className="text-left pb-2">
+            <Link
+              to="/forgotPassword"
+              className="text-sm  text-blue-950 underline decoration-solid"
+            >
+              Forgot password
+            </Link>
+          </div>
           <div className="flex justify-center col-span-2">
             <button
               className="flex justify-center w-60 px-6 py-3 text-sm text-white capitalize transition-colors duration-300 transform bg-zinc-800 rounded-2xl hover:bg-zinc-700 "
               type="submit"
               disabled={isLoading}
             >
-               {isLoading ? "Logging in..." : "Log In"}
+              {isLoading ? "Logging in..." : "Log In"}
             </button>
           </div>
           {error && (

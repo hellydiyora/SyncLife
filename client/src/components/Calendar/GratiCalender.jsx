@@ -50,7 +50,7 @@ const GratiCalender = ({ onDateClick, selectedDate }) => {
   const lastDateOfLastMonth = new Date(currYear, currMonth, 0).getDate();
   const today = new Date();
   return (
-    <div className="w-[250px] galaxyF:w-[320px] min-[400px]:w-[420px] sm:w-[420px]  bg-white rounded-md shadow-md flex flex-col p-3">
+    <div className="w-[250px] signup:w-[320px] min-[400px]:w-[420px] sm:w-[420px]  bg-white rounded-md shadow-md flex flex-col p-3">
       <header className="grid grid-cols-2 gap-10 justify-between py-7 px-14 items-center">
         <p className="text-[27px] sm:text-4xl font-semibold font-subTag ">{`${months[currMonth]} ${currYear}`}</p>
         <div className="flex text-gray-600 h-9 w-9 cursor-pointer items-center justify-center text-center gap-3 ">

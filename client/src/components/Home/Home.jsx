@@ -30,12 +30,12 @@ const Home = () => {
               backgroundAttachment: "fixed",
             }}
           ></div>
-          <div class="flex flex-col gap-3 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
-            <h1 class="text-5xl md:text-6xl lg:text-7xl font-danceTag text-slate-900 bg-orange-50 px-1">
+          <div className="flex flex-col gap-3 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-danceTag text-slate-900 bg-orange-50 px-1">
               Welcome to SyncLife
             </h1>
             <div>
-              <p class="inline-block text-[10px] md:text-[15px] ll:text-lg  font-mainTag px-2 bg-slate-900 text-whit ">
+              <p className="inline-block text-[10px] md:text-[15px] ll:text-lg  font-mainTag px-2 bg-slate-900 text-whit ">
                 Navigating TODAY, designing TOMORROW
               </p>
             </div>

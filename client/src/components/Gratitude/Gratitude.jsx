@@ -187,9 +187,9 @@ const Gratitude = () => {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <div className="bg-gray-100">
-        <h1 className="mt-5 text-4xl galaxyF:text-5xl font-mainTag text-slate-800">GratiMemo</h1>
+        <h1 className="mt-5 text-4xl signup:text-5xl font-mainTag text-slate-800">GratiMemo</h1>
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full gap-10 justify-items-center">
-          <div className="pt-5 galaxyF:p-10">
+          <div className="pt-5 signup:p-10">
             <GratiCalender
               onDateClick={handleDateClick}
               selectedDate={selectedDate}
@@ -198,13 +198,13 @@ const Gratitude = () => {
           <div className="flex flex-col justify-center items-center pb-10">
             <div className="cardBG  p-8 w-3/4 rounded-lg">
               <span>
-                <h2 className="font-subTag font-bold text-2xl galaxyF:text-3xl text-slate-700 mb-4">
+                <h2 className="font-subTag font-bold text-2xl signup:text-3xl text-slate-700 mb-4">
                   <p>Enter your HAPPY Moment</p>
                 </h2>
               </span>
               <form className="flex flex-col gap-4" onSubmit={handleAddSubmit}>
                 <label>
-                  <span className="text-base galaxyF:text-lg font-semibold text-gray-900">
+                  <span className="text-base signup:text-lg font-semibold text-gray-900">
                     Select date:
                   </span>
 
@@ -220,7 +220,7 @@ const Gratitude = () => {
                   <p className="text-red-500 text-sm">{dataError}</p>
                 )}
                 <label>
-                  <span className="text-base galaxyF:text-lg font-semibold text-gray-900">
+                  <span className="text-base signup:text-lg font-semibold text-gray-900">
                     Enter your entry:
                   </span>
                   <input
@@ -233,7 +233,7 @@ const Gratitude = () => {
                   />
                 </label>
                 <label>
-                  <span className="text-base galaxyF:text-lg font-semibold text-gray-900">
+                  <span className="text-base signup:text-lg font-semibold text-gray-900">
                     Attach Image:
                   </span>
                   <input

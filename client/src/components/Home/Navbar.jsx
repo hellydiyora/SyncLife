@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import PersonIcon from "@mui/icons-material/Person";
-import { fetchUser, selectUser } from "../../reducers/authSlice";
+import progress from "../../assets/images/progress.png";
+import profile from "../../assets/images/profile.png";
+import {
+  fetchUser,
+  selectUser,
+} from "../../reducers/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import logo from "../../assets/images/logo.png";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -55,22 +59,23 @@ const Navbar = () => {
   const [userOpen, setUserOpen] = useState(false);
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.auth.user);
+
   const fetchU = useSelector(selectUser);
-  const getDetails = () => {
-    try {
-      const email = fetchU.email;
-      dispatch(fetchUser({ email }));
-    } catch (error) {
-      console.error("Error in fetching: ", error);
-    }
-  };
 
   useEffect(() => {
+    const getDetails = () => {
+      try {
+        const email = fetchU.email;
+        dispatch(fetchUser({ email }));
+      } catch (error) {
+        console.error("Error in fetching: ", error);
+      }
+    };
+
     getDetails();
   }, [dispatch]);
 
   const handleToggle = () => {
-   
     setIsVisible(!isVisible);
     setUserOpen(false);
   };
@@ -80,7 +85,7 @@ const Navbar = () => {
     } else {
       document.documentElement.style.overflow = "";
     }
-  }, [isVisible , userOpen]);
+  }, [isVisible, userOpen]);
 
   const handleClick = () => {
     setUserOpen(!userOpen);
@@ -112,14 +117,15 @@ const Navbar = () => {
                   GoalMinder
                 </span>
               </Link>
-              <Link to="/gratitude">
-                <span className="hover:text-orange-200 transition duration-300 ease-in-out">
-                  GratiMemo
-                </span>
-              </Link>
+
               <Link to="/mood">
                 <span className="hover:text-orange-200 transition duration-300 ease-in-out">
                   EmoSense
+                </span>
+              </Link>
+              <Link to="/gratitude">
+                <span className="hover:text-orange-200 transition duration-300 ease-in-out">
+                  GratiMemo
                 </span>
               </Link>
             </ul>
@@ -127,14 +133,16 @@ const Navbar = () => {
         </div>
         <div className="col-span-2 sm:col-span-1 flex justify-end items-center gap-2">
           <div className="flex justify-center items-center">
-            {userData && (
+            <Link to="/user" className=" text-white">
+              <img src={progress} className="h-12 w-12 p-2" />
+            </Link>
+            
               <div>
-              
                 <span
                   onClick={handleClick}
                   className="text-white hover:text-orange-200 transition duration-300 ease-in-out font-mainTag cursor-pointer"
                 >
-                  It's {userData.firstName}{" "}
+                 <img src={profile} className="h-12 w-12 p-1" />
                 </span>
                 {userOpen && (
                   <div
@@ -145,17 +153,14 @@ const Navbar = () => {
                 <div
                   className={`${
                     userOpen
-                      ? "left-0 top-16 transition-all duration-200 fixed h-full z-50"
-                      : "fixed top-16 -left-96 transition-all h-full duration-700"
+                      ? "left-0 top-16 transition-all duration-800 fixed h-full z-50 "
+                      : "fixed top-16 -left-96 signup:left-[-100%] transition-all h-full duration-700"
                   }`}
                 >
                   <UserBar userOpen={userOpen} setUserOpen={setUserOpen} />
                 </div>
               </div>
-            )}
-            <Link to="/user" className=" text-white">
-              <PersonIcon className="hover:text-orange-200 transition duration-300 ease-in-out " />
-            </Link>
+            
           </div>
           <div
             className="block sm:hidden cursor-pointer"

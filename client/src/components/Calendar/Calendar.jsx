@@ -47,9 +47,9 @@ const Calendar = ({ onDateClick, selectedDate }) => {
   const lastDateOfLastMonth = new Date(currYear, currMonth, 0).getDate();
 
   return (
-    <div className="w-[250px] galaxyF:w-[320px] bg-white rounded-md shadow-md flex flex-col p-3">
+    <div className="w-[250px] signup:w-[320px] bg-white rounded-md shadow-md flex flex-col p-3">
       <header className="grid grid-cols-2 p-2 items-center gap-20">
-        <p className="text-[20px] galaxyF:text-[25px] sm:text-3xl font-semibold">{`${months[currMonth]} ${currYear}`}</p>
+        <p className="text-[20px] signup:text-[25px] sm:text-3xl font-semibold">{`${months[currMonth]} ${currYear}`}</p>
         <div className="flex text-gray-600 h-9 w-9 cursor-pointer items-center justify-center text-center gap-4 ">
           <span
             onClick={() => handlePrevNext(-1)}

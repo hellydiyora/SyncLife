@@ -366,17 +366,17 @@ const MoodProgress = () => {
               </Select>
             </div>
             {view === "year" ? (
-              <div   className="w-[270px] h-[200px]  galaxyF:h-[230px] galaxyF:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]">
+              <div   className="w-[270px] h-[200px]  signup:h-[230px] signup:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]">
                 <p>Total entry: {yearlyData.totalCount}</p>
                 <Bar data={yearlyData.data} options={yearlyOptions} />
               </div>
             ) : view === "month" ? (
-              <div   className="w-[270px] h-[200px]  galaxyF:h-[230px] galaxyF:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]">
+              <div   className="w-[270px] h-[200px]  signup:h-[230px] signup:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]">
                 <p>Total entry: {monthlyData.totalCount}</p>
                 <Bar data={monthlyData.data} options={monthlyOptions} />
               </div>
             ) : (
-              <div   className="w-[270px] h-[200px]  galaxyF:h-[230px]  galaxyF:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]">
+              <div   className="w-[270px] h-[200px]  signup:h-[230px]  signup:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]">
                 <p>Total entry: {weeklyData.totalCount}</p>
                 <Bar data={weeklyData.data} options={weeklyOptions} />
               </div>
@@ -394,7 +394,7 @@ const MoodProgress = () => {
               {" "}
               <h1>Good mood affectors</h1>
               <div 
-                className="w-[270px] h-[200px]  galaxyF:h-[200px] galaxyF:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]"
+                className="w-[270px] h-[200px]  signup:h-[200px] signup:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]"
               >
                 <Bar data={bardata} options={options} />
               </div>
@@ -403,7 +403,7 @@ const MoodProgress = () => {
               {" "}
               <h1>Bad mood affectors</h1>
               <div 
-              className="w-[270px] h-[200px]  galaxyF:h-[200px] galaxyF:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]"
+              className="w-[270px] h-[200px]  signup:h-[200px] signup:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]"
               >
                 <Bar data={badMoodData} options={options} />
               </div>

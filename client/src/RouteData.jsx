@@ -11,7 +11,9 @@ import SignUp from "./authentication/SignUp";
 import LogIn from "./authentication/LogIn";
 
 import { useSelector } from "react-redux";
-import { selectUser } from "./reducers/authSlice";
+import { selectUser, selectUserFromLocalStorage } from "./reducers/authSlice";
+import ForgotPwd from "./authentication/ForgotPwd";
+import ResetPwd from "./authentication/ResetPwd";
 
 const RouteData = () => {
   const user = useSelector(selectUser);
@@ -29,7 +31,10 @@ const RouteData = () => {
             path="/home"
             element={checkUser ? <Home /> : <Navigate to="/" />}
           />
-          <Route path="/journal" element={<Journal />} />
+          <Route
+            path="/journal"
+            element={checkUser ? <Journal /> : <Navigate to="/" />}
+          />
           <Route
             path="/habits"
             element={checkUser ? <Habit /> : <Navigate to="/" />}
@@ -53,6 +58,14 @@ const RouteData = () => {
           <Route
             path="/login"
             element={!checkUser ? <LogIn /> : <Navigate to="/home" />}
+          />
+          <Route
+            path="/forgotPassword"
+            element={!checkUser ? <ForgotPwd /> : <Navigate to="/home" />}
+          />
+          <Route
+            path="/resetPassword"
+            element={!checkUser ? <ResetPwd /> : <Navigate to="/home" />}
           />
         </Routes>
       </BrowserRouter>

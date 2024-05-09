@@ -1,21 +1,18 @@
 import React, { useState } from "react";
-import UserBar from "./UseBar";
 import JournalProgress from "./JournalProgress";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
 import HabitProgress from "./HabitProgress";
-import GratiProgress from "./GratiProgress";
 import MoodProgress from "./MoodProgress";
 
 const Progress = ({
   onJournalProgressClick,
   onHabitProgressClick,
-  onGratiProgressClick,
   onMoodProgressClick,
 }) => {
   return (
     <div>
-      <ul className="grid min-[620px]:grid-cols-4 grid-cols-2 sm:text-lg userP:text-2xl md:text-xl gap-4">
+      <ul className="grid signup:grid-cols-3 sm:text-lg userP:text-2xl md:text-xl gap-4">
         <li className="bg-gray-300  rounded-md flex justify-center items-center p-5 cursor-pointer">
           <span onClick={onJournalProgressClick} >
             TaskMate
@@ -24,11 +21,6 @@ const Progress = ({
         <li className="bg-gray-300 rounded-md flex justify-center items-center p-5 cursor-pointer">
           <span onClick={onHabitProgressClick} >
             GoalMinder
-          </span>{" "}
-        </li>
-        <li className="bg-gray-300 rounded-md flex justify-center items-center p-5  cursor-pointer">
-          <span onClick={onGratiProgressClick} >
-            GratiMemo
           </span>{" "}
         </li>
         <li className="bg-gray-300 rounded-md flex justify-center items-center p-5 cursor-pointer">
@@ -58,14 +50,14 @@ const UserProfile = () => {
             <Progress
               onJournalProgressClick={() => handleProgressClick("journal")}
               onHabitProgressClick={() => handleProgressClick("habit")}
-              onGratiProgressClick={() => handleProgressClick("grati")}
+              
               onMoodProgressClick={() => handleProgressClick("mood")}
             />
           </div>
           <div >
             {activeProgress === "journal" && <JournalProgress />}
             {activeProgress === "habit" && <HabitProgress />}
-            {activeProgress === "grati" && <GratiProgress />}
+
             {activeProgress === "mood" && <MoodProgress />}
           </div>
         </div>

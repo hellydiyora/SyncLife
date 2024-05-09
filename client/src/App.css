@@ -23,6 +23,9 @@
 .bgHabit {
   background-color: #c3d7d9;
 }
+.bgHabitExpired {
+  background-color: #cdd3d8;
+}
 .bgHabitDetail {
   background-color: #d5ddde;
 }

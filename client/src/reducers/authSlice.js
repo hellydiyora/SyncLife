@@ -6,6 +6,7 @@ import {
 import axiosNew from "./axioInstance";
 import { setHabits } from "./habitSlice";
 import { setLists } from "./journalSlice";
+import { useEffect } from "react";
 
 const authSlice = createSlice({
   name: "auth",
@@ -60,6 +61,30 @@ const authSlice = createSlice({
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
+      })
+      .addCase(forgotUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+    .addCase(forgotUser.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.user = action.payload;
+    })
+    .addCase(forgotUser.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    })
+    .addCase(changePassword.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
   },
 });
@@ -100,6 +125,56 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+
+export const fetchUser = createAsyncThunk(
+  "auth/fetchUser",
+  async ({ email }) => {
+    
+    try {
+      const response = await axiosNew.get("/user", { params: { email } });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      throw error;
+    }
+  }
+);
+
+export const forgotUser = createAsyncThunk(
+  "auth/forgotUser",
+  async ({ email}) => {
+    try {
+      const response = await axiosNew.post("/forgotPassword", { email});
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.error);
+    }
+  }
+);
+
+export const checkOtp = createAsyncThunk("auth/checkOtp" , async({otp}) => {
+  try {
+   
+    const response = await axiosNew.post("/forgotPassword/otp", { otp});
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.error);
+  }
+});
+
+export const changePassword = createAsyncThunk(
+  "auth/changePassword" , 
+  async ({ email, password}) => {
+    try {
+      const response = await axiosNew.post("/resetpassword", { email , password});
+      localStorage.setItem("user", JSON.stringify(response.data));
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.error);
+    }
+  }
+);
+
 export const selectUserFromLocalStorage = createSelector(
   () => localStorage.getItem("user"),
   (user) => JSON.parse(user) || {}
@@ -113,16 +188,5 @@ export const selectUser = createSelector(
   (auth, savedUser) => savedUser || auth.user
 );
 
-export const fetchUser = createAsyncThunk(
-  "auth/fetchUser",
-  async ({ email }) => {
-    try {
-      const response = await axiosNew.get("/user", { params: { email } });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      throw error;
-    }
-  }
-);
+
 export default authSlice.reducer;

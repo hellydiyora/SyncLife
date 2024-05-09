@@ -189,6 +189,7 @@ const Journal = () => {
   const handleUpdateConfirmCancel = () => {
     setUpdateConfirmBoxVisible(false);
     setNewUpdatedList("");
+    setUpdateMode("add");
   };
 
   const handleUpdateConfirmChange = async () => {
@@ -254,20 +255,20 @@ const Journal = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="pt-5 pb-10 bg-gray-200 ">
+      <div className="pt-5 pb-10 bg-gray-100 ">
         <h2 className="text-5xl font-mainTag text-slate-900">
           <span className="text-slate-950 text-6xl">T</span>ask
           <span className="text-slate-950 text-6xl">M</span>ate
         </h2>
         <div className="grid lg:grid-cols-2 md:grid-cols-1 grid-cols-1 h-full gap-10 rounded-md">
           <div className="flex flex-col gap-5 items-center">
-            <div className="flex  justify-center items-center mb-2 galaxyF:mb-4">
+            <div className="flex  justify-center items-center mb-2 signup:mb-4">
               {updateMode === "add" ? (
                 <form onSubmit={handleAddClick}>
                   <h1 className="text-2xl font-subTag font-semibold mb-3">
                     Add Task
                   </h1>
-                  <div className="flex galaxyF:flex-row flex-col galaxyF:gap-0 gap-3">
+                  <div className="flex signup:flex-row flex-col signup:gap-0 gap-3">
                     <div>
                       <input
                         type="text"
@@ -359,7 +360,7 @@ const Journal = () => {
                 <div>
                  
                   <div className="">
-                    <div className="grid grid-cols-1 galaxyF:grid-cols-2 gap-4 font-allTag">
+                    <div className="grid grid-cols-1 signup:grid-cols-2 gap-4 font-allTag">
                       {lists &&
                         lists
                           .filter(

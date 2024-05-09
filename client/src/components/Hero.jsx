@@ -7,7 +7,7 @@ const Hero = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2">
       <div className="h-screen bg-slate-100 flex-col">
         <div className="h-full flex flex-col items-center justify-center">
-          <h1 className="text-6xl galaxyF:text-7xl md:text-8xl lg:text-9xl m-5 font-mainTag text-red-900">
+          <h1 className="text-6xl signup:text-7xl md:text-8xl lg:text-9xl m-5 font-mainTag text-red-900">
             <span className="text-red-950">S</span>ync
             <span className="text-red-950">L</span>ife
           </h1>
