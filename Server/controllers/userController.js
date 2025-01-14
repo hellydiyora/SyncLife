@@ -54,6 +54,7 @@ const signup = async (req, res) => {
       password: hashedPassword,
     });
 
+    console.log(user)
     const token = createToken(user._id);
 
     res.status(200).json({ email, token });

@@ -14,7 +14,7 @@ const MONGO_URI = process.env.MONGO_URI;
 
 app.use(
   cors({
-    origin: ["https://sync-life-api.vercel.app/"], // Replace with your frontend URL if necessary
+    origin: ["https://sync-life-frontend.vercel.app"], // Replace with your frontend URL if necessary
     methods: ["POST", "GET"],
     credentials: true,
   })
