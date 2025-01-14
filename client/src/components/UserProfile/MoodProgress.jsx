@@ -212,7 +212,7 @@ const MoodProgress = () => {
   });
 
   const activityCountArray = Object.entries(activityCount)
-    .filter(([name, count]) => count > 2)
+    .filter(([name, count]) => count > 5)
     .map(([name, count]) => ({ name, count }));
 
   const labels = activityCountArray
@@ -284,9 +284,9 @@ const MoodProgress = () => {
     }
   });
 
-  console.log(badActivityCount)
+
   const badActivityCountArray = Object.entries(badActivityCount)
-    .filter(([name, count]) => count > 2)
+    .filter(([name, count]) => count > 5)
     .map(([name, count]) => ({ name, count }));
 
   const badActivityLabels = badActivityCountArray

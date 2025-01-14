@@ -48,6 +48,7 @@ const Mood = () => {
   }, [dispatch]);
 
   const handleDateClick = (date) => {
+    
     setSelectedDate(date);
     fetchAndSetMoods();
   };

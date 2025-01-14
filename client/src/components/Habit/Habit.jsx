@@ -52,6 +52,7 @@ const Habit = () => {
     }
   };
 
+
   useEffect(() => {
     fetchAndSetHabits();
     window.scroll({
@@ -208,6 +209,13 @@ const Habit = () => {
         return;
       }
 
+      const today = moment().format("YYYY-MM-DD");
+      
+      if(habit.endDate < today )
+      {
+        setEndDateError("Days are already finished");
+        return;
+      }
       if (habit.endDate < habit.startDate) {
         setEndDateError("End date should be after start date");
         return;

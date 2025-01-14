@@ -63,7 +63,7 @@ const ForgotPwd = () => {
 
   const handleOtpChange = (e) => {
     setOtpData({ ...otpData, [e.target.name]: e.target.value });
-    setOtpError("");
+    setOtpError("");  
   };
 
   useEffect(() => {

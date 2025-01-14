@@ -36,6 +36,10 @@ const LogIn = () => {
     }
   };
   
+  const handleForgotClick = () => {
+    dispatch({ type: "auth/clearError" });
+  }
+  
   useEffect(() => {
     if (logInSuccess && !error) {
       navigate("/home");
@@ -105,6 +109,7 @@ const LogIn = () => {
             <Link
               to="/forgotPassword"
               className="text-sm  text-blue-950 underline decoration-solid"
+              onClick={handleForgotClick}
             >
               Forgot password
             </Link>
