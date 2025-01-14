@@ -12,7 +12,11 @@ require('dotenv').config();
 const PORT = process.env.PORT;
 const MONGO_URI = process.env.MONGO_URI;
 
-app.use(cors());
+app.use(cors({
+  origin: ["https://sync-life-api.vercel.app/"],
+  methods: ["POST" , "GET"],
+  credentials: true
+}));
 app.use(express.json());
 app.use('/', express.static('assets'));
 
