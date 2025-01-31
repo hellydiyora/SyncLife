@@ -9,13 +9,13 @@ const moodRoute = require("./routes/moodRoute");
 const app = express();
 require("dotenv").config();
 
-const PORT = process.env.PORT || 3000; // Default to 3000 if PORT is not set
+const PORT = process.env.PORT;
 const MONGO_URI = process.env.MONGO_URI;
 
 app.use(
   cors({
-    origin: ["https://sync-life-frontend.vercel.app"], // Replace with your frontend URL if necessary
-    methods: ["POST", "GET"],
+    origin: "https://sync-life-frontend.vercel.app", 
+    methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
 );
@@ -31,19 +31,16 @@ mongoose
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch((err) => console.error("Failed to connect to MongoDB Atlas", err));
 
-// API Routes
 app.use("/journal", journalRoutes);
 app.use("/habits", habitRoutes);
 app.use("/gratitude", gratiRoutes);
 app.use("/mood", moodRoute);
 app.use("/", authRoutes);
 
-// Root Route
-app.get("/", (req, res) => {
-  res.send("Welcome to Sync Life API");
-});
-
-// Start Server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+app.get("/", (req, res) => {
+  res.send("API is working!");
 });
