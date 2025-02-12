@@ -12,27 +12,10 @@ require("dotenv").config();
 const PORT = process.env.PORT;
 const MONGO_URI = process.env.MONGO_URI;
 
-app.use(cors({
-  origin: "https://sync-life-frontend.vercel.app",
-  methods: "GET,POST,PUT,DELETE",
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 app.use("/", express.static("assets"));
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://sync-life-frontend.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  next();
-});
-
-app.options("*", (req, res) => {
-  res.sendStatus(200);
-});
-
-// Connect to MongoDB Atlas
 mongoose
   .connect(MONGO_URI, {
     useNewUrlParser: true,

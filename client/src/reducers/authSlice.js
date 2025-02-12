@@ -94,6 +94,7 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }) => {
     try {
       const response = await axiosNew.post("/login", { email, password });
+      console.log(response);
       localStorage.setItem("user", JSON.stringify(response.data));
       return response.data;
     } catch (error) {

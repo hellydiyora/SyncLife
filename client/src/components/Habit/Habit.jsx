@@ -52,13 +52,12 @@ const Habit = () => {
     }
   };
 
-
   useEffect(() => {
     fetchAndSetHabits();
     window.scroll({
       top: 0,
       left: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   }, [dispatch]);
 
@@ -133,7 +132,7 @@ const Habit = () => {
       endDate: habit.endDate,
       habitId: habit._id,
     });
-    
+
     setUpdateFormVisible(true);
   };
 
@@ -210,9 +209,8 @@ const Habit = () => {
       }
 
       const today = moment().format("YYYY-MM-DD");
-      
-      if(habit.endDate < today )
-      {
+
+      if (habit.endDate < today) {
         setEndDateError("Days are already finished");
         return;
       }
@@ -258,11 +256,10 @@ const Habit = () => {
   const handleUpdateClick = (e) => {
     e.preventDefault();
     if (user) {
-      
       const habitUpdate = habits.find(
         (habit) => habit._id === updateHabit.habitId
       );
-     
+
       if (
         updateHabit.name === habitUpdate.name &&
         updateHabit.startDate === habitUpdate.startDate &&
@@ -420,79 +417,88 @@ const Habit = () => {
             <p className="text-gray-500 text-lg">No data available</p>
           ) : (
             <div>
-            <ul className="grid gap-4 2xl:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-1 signup:grid-cols-2 ">
+              <ul className="grid gap-4 2xl:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-1 signup:grid-cols-2 ">
+                {habits &&
+                  habits
+                    .filter((data) => moment(data.endDate).isAfter(today))
+                    .map((habit) => (
+                      <li
+                        key={habit._id}
+                        className="w-52 signup:w-auto bgHabit m-2 rounded-md p-4 shadow-sm shadow-black"
+                      >
+                        <div className="flex flex-col justify-center gap-5">
+                          <span className="text-4xl font-subTag text-gray-700 capitalize">
+                            {habit.name}
+                          </span>
+                          <span className="flex flex-col signup:flex-col xl:flex-row justify-center gap-3">
+                            <button
+                              className="btnH  p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                              onClick={() => showHabitDetails(habit)}
+                            >
+                              Status
+                            </button>
+                            <button
+                              className="btnH p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                              onClick={() => handleDeleteClick(habit._id)}
+                            >
+                              Delete
+                            </button>
+                            <button
+                              className="btnH p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                              onClick={() => handleUpdateButtonClick(habit)}
+                            >
+                              Update
+                            </button>
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+              </ul>
               {habits &&
-                habits.filter((data) => moment(data.endDate).isAfter(today))
-                .map((habit) => (
-                  <li
-                    key={habit._id}
-                    className="w-52 signup:w-auto bgHabit m-2 rounded-md p-4 shadow-sm shadow-black"
-                  >
-                    <div className="flex flex-col justify-center gap-5">
-                      <span className="text-4xl font-subTag text-gray-700 capitalize">
-                        {habit.name}
-                      </span>
-                      <span className="flex flex-col signup:flex-col xl:flex-row justify-center gap-3">
-                        <button
-                          className="btnH  p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
-                          onClick={() => showHabitDetails(habit)}
+                habits
+                  .filter((data) => moment(data.endDate).isBefore(today))
+                  .map((habit) => (
+                    <p className="p-2 text-lg text-gray-500 ">Expired Habits</p>
+                  ))}
+              <ul className="grid gap-4 2xl:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-1 signup:grid-cols-2 ">
+                {habits &&
+                  habits
+                    .filter((data) => moment(data.endDate).isBefore(today))
+                    .map((habit) => (
+                      <div className="">
+                        <li
+                          key={habit._id}
+                          className="w-52 signup:w-auto bgHabitExpired m-2 rounded-md p-4 shadow-sm shadow-black"
                         >
-                          Status
-                        </button>
-                        <button
-                          className="btnH p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
-                          onClick={() => handleDeleteClick(habit._id)}
-                        >
-                          Delete
-                        </button>
-                        <button
-                          className="btnH p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
-                          onClick={() => handleUpdateButtonClick(habit)}
-                        >
-                          Update
-                        </button>
-                      </span>
-                    </div>
-                  </li>
-                ))}
-            </ul>
-            <p className="p-2 text-lg text-gray-500">Expired Habits</p>
-            <ul className="grid gap-4 2xl:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-1 signup:grid-cols-2 ">
-              {habits &&
-                habits.filter((data) => moment(data.endDate).isBefore(today))
-                .map((habit) => (
-                  <li
-                    key={habit._id}
-                    className="w-52 signup:w-auto bgHabitExpired m-2 rounded-md p-4 shadow-sm shadow-black"
-                  >
-                    <div className="flex flex-col justify-center gap-5">
-                      <span className="text-4xl font-subTag text-gray-600 capitalize">
-                        {habit.name}
-                      </span>
-                      <span className="flex flex-col signup:flex-col xl:flex-row justify-center gap-3 ">
-                        <button
-                          className="btnH text-gray-600  p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
-                          onClick={() => showHabitDetails(habit)}
-                        >
-                          Status
-                        </button>
-                        <button
-                          className="btnH text-gray-600 p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
-                          onClick={() => handleDeleteClick(habit._id)}
-                        >
-                          Delete
-                        </button>
-                        <button
-                          className="btnH text-gray-600 p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
-                          onClick={() => handleUpdateButtonClick(habit)}
-                        >
-                          Update
-                        </button>
-                      </span>
-                    </div>
-                  </li>
-                ))}
-            </ul>
+                          <div className="flex flex-col justify-center gap-5">
+                            <span className="text-4xl font-subTag text-gray-600 capitalize">
+                              {habit.name}
+                            </span>
+                            <span className="flex flex-col signup:flex-col xl:flex-row justify-center gap-3 ">
+                              <button
+                                className="btnH text-gray-600  p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                                onClick={() => showHabitDetails(habit)}
+                              >
+                                Status
+                              </button>
+                              <button
+                                className="btnH text-gray-600 p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                                onClick={() => handleDeleteClick(habit._id)}
+                              >
+                                Delete
+                              </button>
+                              <button
+                                className="btnH text-gray-600 p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                                onClick={() => handleUpdateButtonClick(habit)}
+                              >
+                                Update
+                              </button>
+                            </span>
+                          </div>
+                        </li>
+                      </div>
+                    ))}
+              </ul>
             </div>
           )}
         </div>

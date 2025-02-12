@@ -27,7 +27,7 @@ const LogIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+console.log(loginData);
     try {
       await dispatch(loginUser(loginData));
       setLogInSuccess(true);
