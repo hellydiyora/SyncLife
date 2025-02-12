@@ -22,7 +22,7 @@ Backend: NodeJS, MongoDB
 
 ## Prerequisites
 
----Ensure you have Node.js and MongoDB installed.---
+Ensure you have Node.js and MongoDB installed.
 
 ## Steps to Run Locally
 
