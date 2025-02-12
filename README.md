@@ -20,11 +20,11 @@ Backend: NodeJS, MongoDB
 
 # Installation & Setup
 
-##Prerequisites
+## Prerequisites
 
 ---Ensure you have Node.js and MongoDB installed.---
 
-##Steps to Run Locally
+## Steps to Run Locally
 
 Clone the repository
 
@@ -33,12 +33,12 @@ Clone the repository
 
 # Install dependencies
 
-###Install backend dependencies
+### Install backend dependencies
 
     cd server
     npm install
 
-###Install frontend dependencies 
+### Install frontend dependencies 
 
     cd ../client
     npm install
