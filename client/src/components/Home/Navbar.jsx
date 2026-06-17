@@ -16,24 +16,52 @@ const NavBox = ({ onClose, onProfileClick }) => {
         onClick={onClose}
       >
         <ul className="flex flex-col text-left text-sm text-[#736E67] dark:text-[#9E988E] font-medium tracking-wide">
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
-            <Link to="/journal">TaskMate</Link>
+          <li className="rounded-lg transition-colors duration-200">
+            <Link
+              to="/journal"
+              className="block px-6 py-3 hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg transition-colors duration-200"
+            >
+              TaskMate
+            </Link>
           </li>
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
-            <Link to="/habits">GoalMinder</Link>
+          <li className="rounded-lg transition-colors duration-200">
+            <Link
+              to="/habits"
+              className="block px-6 py-3 hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg transition-colors duration-200"
+            >
+              GoalMinder
+            </Link>
           </li>
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
-            <Link to="/mood">EmoSense</Link>
+          <li className="rounded-lg transition-colors duration-200">
+            <Link
+              to="/mood"
+              className="block px-6 py-3 hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg transition-colors duration-200"
+            >
+              EmoSense
+            </Link>
           </li>
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
-            <Link to="/gratitude">GratiMemo</Link>
+          <li className="rounded-lg transition-colors duration-200">
+            <Link
+              to="/gratitude"
+              className="block px-6 py-3 hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg transition-colors duration-200"
+            >
+              GratiMemo
+            </Link>
           </li>
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
-            <Link to="/ai">AI Insights</Link>
+          <li className="rounded-lg transition-colors duration-200">
+            <Link
+              to="/ai"
+              className="block px-6 py-3 hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg transition-colors duration-200"
+            >
+              AI Insights
+            </Link>
           </li>
           <li className="border-t border-[#736E67]/10 dark:border-[#9E988E]/10 my-1"></li>
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
-            <Link to="/user" className="flex items-center gap-2">
+          <li className="rounded-lg transition-colors duration-200">
+            <Link
+              to="/user"
+              className="flex items-center gap-2 px-6 py-3 hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg transition-colors duration-200"
+            >
               <svg className="w-4 h-4 text-[#7E8F7A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 013 18.375v-5.25zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-9.75zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v14.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
               </svg>
@@ -41,18 +69,16 @@ const NavBox = ({ onClose, onProfileClick }) => {
             </Link>
           </li>
           <li
-            className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200 cursor-pointer"
+            className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200 cursor-pointer flex items-center gap-2"
             onClick={(e) => {
               e.stopPropagation();
               onProfileClick();
             }}
           >
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-[#7E8F7A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              Profile Settings
-            </div>
+            <svg className="w-4 h-4 text-[#7E8F7A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Profile Settings
           </li>
         </ul>
       </div>
