@@ -10,7 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import UserBar from "../UserProfile/UseBar";
 import ThemeToggle from "../ThemeToggle";
 
-const NavBox = ({ onClose }) => {
+const NavBox = ({ onClose, onProfileClick }) => {
   return (
     <div>
       <div
@@ -32,6 +32,29 @@ const NavBox = ({ onClose }) => {
           </li>
           <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
             <Link to="/ai">AI Insights</Link>
+          </li>
+          <li className="border-t border-[#736E67]/10 dark:border-[#9E988E]/10 my-1"></li>
+          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
+            <Link to="/user" className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-[#7E8F7A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 013 18.375v-5.25zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-9.75zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v14.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+              </svg>
+              Progress Profile
+            </Link>
+          </li>
+          <li
+            className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              onProfileClick();
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-[#7E8F7A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Profile Settings
+            </div>
           </li>
         </ul>
       </div>
@@ -103,9 +126,14 @@ const Navbar = () => {
     setUserOpen(false);
   };
 
+  const handleMobileProfileClick = () => {
+    setIsVisible(false);
+    setUserOpen(true);
+  };
+
   return (
     <div className="sticky top-0 z-40 bg-[#FAF8F5]/80 backdrop-blur-md border-b border-[#736E67]/[0.06]">
-      <div className="max-w-7xl mx-auto grid grid-cols-4 sm:grid-cols-5 px-6 md:px-12 py-4 items-center relative">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-12 py-4 relative">
         {/* Elegant Serif Logo */}
         <div>
           <Link to="/home" className="text-left inline-block">
@@ -116,35 +144,35 @@ const Navbar = () => {
         </div>
 
         {/* Center Desktop Links */}
-        <div className="sm:col-span-3">
-          <div className="hidden sm:block">
-            <ul className="flex items-center justify-center gap-10 text-sm font-medium text-[#736E67] tracking-wide">
-              <Link to="/journal" className="hover:text-[#2D2A26] transition-colors duration-200 py-1">
-                TaskMate
-              </Link>
-              <Link to="/habits" className="hover:text-[#2D2A26] transition-colors duration-200 py-1">
-                GoalMinder
-              </Link>
-              <Link to="/mood" className="hover:text-[#2D2A26] transition-colors duration-200 py-1">
-                EmoSense
-              </Link>
-              <Link to="/gratitude" className="hover:text-[#2D2A26] transition-colors duration-200 py-1">
-                GratiMemo
-              </Link>
-              <Link to="/ai" className="hover:text-[#2D2A26] transition-colors duration-200 py-1 flex items-center gap-1">
-                <svg className="w-3.5 h-3.5 text-[#7E8F7A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                </svg>
-                Insights
-              </Link>
-            </ul>
-          </div>
+        <div className="hidden sm:block">
+          <ul className="flex items-center justify-center gap-10 text-sm font-medium text-[#736E67] tracking-wide">
+            <Link to="/journal" className="hover:text-[#2D2A26] transition-colors duration-200 py-1">
+              TaskMate
+            </Link>
+            <Link to="/habits" className="hover:text-[#2D2A26] transition-colors duration-200 py-1">
+              GoalMinder
+            </Link>
+            <Link to="/mood" className="hover:text-[#2D2A26] transition-colors duration-200 py-1">
+              EmoSense
+            </Link>
+            <Link to="/gratitude" className="hover:text-[#2D2A26] transition-colors duration-200 py-1">
+              GratiMemo
+            </Link>
+            <Link to="/ai" className="hover:text-[#2D2A26] transition-colors duration-200 py-1 flex items-center gap-1">
+              <svg className="w-3.5 h-3.5 text-[#7E8F7A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+              </svg>
+              Insights
+            </Link>
+          </ul>
         </div>
 
-        {/* Right side — user control SVG triggers */}
-        <div className="col-span-2 sm:col-span-1 flex justify-end items-center gap-4">
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
+        {/* Right side controls */}
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+
+          {/* Desktop-only profile buttons */}
+          <div className="hidden sm:flex items-center gap-3">
             {/* Progress button */}
             <Link
               to="/user"
@@ -156,7 +184,7 @@ const Navbar = () => {
               </svg>
             </Link>
 
-            {/* Profile Drawer trigger */}
+            {/* Profile Settings button */}
             <div className="relative">
               <button
                 id="profile-toggle-btn"
@@ -168,21 +196,6 @@ const Navbar = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </button>
-
-              {userOpen && (
-                <div
-                  className="fixed inset-0 bg-[#2D2A26]/30 backdrop-blur-sm z-40"
-                  onClick={handleClose}
-                ></div>
-              )}
-              <div
-                ref={sidebarRef}
-                className={`fixed top-0 bottom-0 h-screen z-50 shadow-2xl transition-all duration-500 ease-in-out ${
-                  userOpen ? "left-0" : "-left-[400px]"
-                }`}
-              >
-                <UserBar userOpen={userOpen} setUserOpen={setUserOpen} />
-              </div>
             </div>
           </div>
 
@@ -211,8 +224,24 @@ const Navbar = () => {
             isVisible ? "opacity-100 scale-100 translate-y-2" : "opacity-0 scale-95 pointer-events-none"
           }`}
         >
-          <NavBox onClose={handleToggle} />
+          <NavBox onClose={handleToggle} onProfileClick={handleMobileProfileClick} />
         </div>
+      </div>
+
+      {/* Profile Settings Drawer (Rendered at root level so it works on both desktop and mobile dropdown trigger) */}
+      {userOpen && (
+        <div
+          className="fixed inset-0 bg-[#2D2A26]/30 backdrop-blur-sm z-40"
+          onClick={handleClose}
+        ></div>
+      )}
+      <div
+        ref={sidebarRef}
+        className={`fixed top-0 bottom-0 h-screen z-50 shadow-2xl transition-all duration-500 ease-in-out ${
+          userOpen ? "left-0" : "-left-[400px]"
+        }`}
+      >
+        <UserBar userOpen={userOpen} setUserOpen={setUserOpen} />
       </div>
     </div>
   );
