@@ -236,7 +236,7 @@ const Navbar = () => {
         {/* Mobile dropdown slider */}
         {isVisible && (
           <div
-            className="fixed inset-0 bg-[#2D2A26]/20 backdrop-blur-sm z-40"
+            className="fixed inset-0 z-40"
             onClick={handleToggle}
           ></div>
         )}
