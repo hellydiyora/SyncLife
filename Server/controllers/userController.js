@@ -6,13 +6,10 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const Mailgen = require("mailgen");
 const otpGenerator = require("otp-generator");
-const { Resend } = require("resend");
-
 const secret = process.env.SECRET_KEY;
 const userEmail = process.env.EMAIL;
 const userPassword = process.env.PASSWORD;
-const resendApiKey = process.env.RESEND_API_KEY;
-const resend = new Resend(resendApiKey);
+const brevoApiKey = process.env.BREVO_API_KEY;
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, secret, { expiresIn: "3d" });
@@ -137,22 +134,31 @@ const sendSignupOtp = async (req, res) => {
     const mail = mailGenerator.generate(response);
 
     try {
-      const { data, error } = await resend.emails.send({
-        from: "SyncLife <onboarding@resend.dev>",
-        to: email,
-        subject: "Verify Your Email - SyncLife Registration",
-        html: mail,
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "accept": "application/json",
+          "api-key": brevoApiKey,
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({
+          sender: { name: "SyncLife", email: userEmail },
+          to: [{ email: email }],
+          subject: "Verify Your Email - SyncLife Registration",
+          htmlContent: mail
+        })
       });
 
-      if (error) {
-        console.error("Error sending signup verification email via Resend:", error);
+      const data = await response.json();
+      if (!response.ok) {
+        console.error("Error sending signup verification email via Brevo API:", data);
         return res.status(500).json({ error: "Error sending verification email" });
       }
 
-      console.log("Email sent successfully to:", email, "| Message ID:", data?.id);
+      console.log("Email sent successfully to:", email, "| Message ID:", data?.messageId);
       res.status(200).json({ message: "Verification code sent to your email" });
     } catch (err) {
-      console.error("Resend API request exception:", err);
+      console.error("Brevo API request exception:", err);
       res.status(500).json({ error: "Error sending verification email" });
     }
   } catch (error) {
@@ -253,24 +259,33 @@ const forgotUser = async (req, res) => {
     const mail = mailGenerator.generate(response);
 
     try {
-      const { data, error } = await resend.emails.send({
-        from: "SyncLife <onboarding@resend.dev>",
-        to: email,
-        subject: "Reset Password - SyncLife",
-        html: mail,
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "accept": "application/json",
+          "api-key": brevoApiKey,
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({
+          sender: { name: "SyncLife", email: userEmail },
+          to: [{ email: email }],
+          subject: "Reset Password - SyncLife",
+          htmlContent: mail
+        })
       });
 
-      if (error) {
-        console.error("Error sending password reset email via Resend:", error);
+      const data = await response.json();
+      if (!response.ok) {
+        console.error("Error sending password reset email via Brevo API:", data);
         return res.status(500).json({ error: "Error sending email" });
       }
 
-      console.log("Password reset email sent successfully to:", email, "| Message ID:", data?.id);
+      console.log("Password reset email sent successfully to:", email, "| Message ID:", data?.messageId);
       res.status(201).json({
         email,
       });
     } catch (err) {
-      console.error("Resend API password reset exception:", err);
+      console.error("Brevo API password reset exception:", err);
       res.status(500).json({ error: "Error sending email" });
     }
   } catch (error) {
