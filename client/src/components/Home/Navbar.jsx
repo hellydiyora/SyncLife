@@ -14,23 +14,23 @@ const NavBox = ({ onClose }) => {
   return (
     <div>
       <div
-        className="z-50 bg-[#FAF8F5] border border-[#736E67]/[0.08] shadow-lg rounded-bl-xl p-2"
+        className="z-50 bg-[#FAF8F5] dark:bg-[#1E1C19] border border-[#736E67]/[0.08] dark:border-[#9E988E]/10 shadow-lg rounded-bl-xl p-2"
         onClick={onClose}
       >
-        <ul className="flex flex-col text-left text-sm text-[#736E67] font-medium tracking-wide">
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] rounded-lg px-6 py-3 transition-colors duration-200">
+        <ul className="flex flex-col text-left text-sm text-[#736E67] dark:text-[#9E988E] font-medium tracking-wide">
+          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
             <Link to="/journal">TaskMate</Link>
           </li>
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] rounded-lg px-6 py-3 transition-colors duration-200">
+          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
             <Link to="/habits">GoalMinder</Link>
           </li>
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] rounded-lg px-6 py-3 transition-colors duration-200">
+          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
             <Link to="/mood">EmoSense</Link>
           </li>
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] rounded-lg px-6 py-3 transition-colors duration-200">
+          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
             <Link to="/gratitude">GratiMemo</Link>
           </li>
-          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] rounded-lg px-6 py-3 transition-colors duration-200">
+          <li className="hover:bg-[#7E8F7A]/10 hover:text-[#2D2A26] dark:hover:bg-[#93A68F]/20 dark:hover:text-[#FAF8F5] rounded-lg px-6 py-3 transition-colors duration-200">
             <Link to="/ai">AI Insights</Link>
           </li>
         </ul>

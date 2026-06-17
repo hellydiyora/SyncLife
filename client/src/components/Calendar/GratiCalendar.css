@@ -53,3 +53,24 @@
   color: #2D2A26;
   font-size: 0.85rem;
 }
+
+/* Dark theme overrides for gratitude calendar */
+.dark .cal .days li {
+  color: var(--color-text-dark);
+}
+.dark .cal .days li p {
+  color: var(--color-text-dark);
+}
+.dark .days li.inactive {
+  color: rgba(250, 248, 245, 0.3);
+}
+.dark .cal.weeks li {
+  color: var(--color-text-muted);
+}
+.dark .cal .days li:hover {
+  background-color: rgba(147, 166, 143, 0.15);
+}
+.dark .activeeSelected:hover {
+  background-color: rgba(147, 166, 143, 0.2);
+}
+

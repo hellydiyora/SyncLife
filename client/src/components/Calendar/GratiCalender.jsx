@@ -119,7 +119,7 @@ const GratiCalender = ({ onDateClick, selectedDate }) => {
                 <div className="grid">
                   <div
                     className={`w-[40px] h-10 flex items-center justify-center relative rounded-xl transition-all duration-300 ${
-                      isSelected ? "border-2 border-[#2D2A26] shadow-sm" : ""
+                      isSelected ? "border-2 border-[#2D2A26] dark:border-[#FAF8F5] shadow-sm" : ""
                     }`}
                   >
                     {hasImage ? (

@@ -381,3 +381,35 @@ html, body {
 .dark .react-calendar__navigation button:enabled:focus {
   background-color: var(--color-bg-oatmeal) !important;
 }
+
+/* Global hover, border, and outline button overrides in dark mode */
+.dark .hover\:text-\[\#2D2A26\]:hover {
+  color: var(--color-text-dark) !important;
+}
+
+.dark .group:hover .group-hover\:text-\[\#2D2A26\] {
+  color: var(--color-text-dark) !important;
+}
+
+.dark .hover\:bg-\[\#FAF8F5\]:hover {
+  background-color: var(--color-bg-oatmeal) !important;
+}
+
+.dark .btn-cozy-outline {
+  border-color: rgba(250, 248, 245, 0.25) !important;
+  color: var(--color-text-dark) !important;
+}
+
+.dark .btn-cozy-outline:hover {
+  background-color: rgba(250, 248, 245, 0.04) !important;
+  border-color: var(--color-text-dark) !important;
+}
+
+.dark .border-\[\#736E67\]\/20 {
+  border-color: rgba(250, 248, 245, 0.15) !important;
+}
+
+.dark .hover\:bg-\[\#7E8F7A\]\/\[0\.08\]:hover {
+  background-color: rgba(147, 166, 143, 0.12) !important;
+}
+

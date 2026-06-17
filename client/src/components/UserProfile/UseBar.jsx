@@ -135,7 +135,7 @@ const UserBar = ({ userOpen, setUserOpen }) => {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] transition-colors"
+                      className="w-full px-3 py-2 bg-transparent text-[#2D2A26] border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] dark:focus:border-[#93A68F] transition-colors"
                       required
                     />
                   </div>
@@ -148,7 +148,7 @@ const UserBar = ({ userOpen, setUserOpen }) => {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] transition-colors"
+                      className="w-full px-3 py-2 bg-transparent text-[#2D2A26] border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] dark:focus:border-[#93A68F] transition-colors"
                       required
                     />
                   </div>
@@ -164,7 +164,7 @@ const UserBar = ({ userOpen, setUserOpen }) => {
                     value={formData.nickname}
                     onChange={handleChange}
                     placeholder="e.g. Helly"
-                    className="w-full px-3 py-2 border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] transition-colors"
+                    className="w-full px-3 py-2 bg-transparent text-[#2D2A26] border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] dark:focus:border-[#93A68F] transition-colors"
                   />
                 </div>
 
@@ -177,7 +177,7 @@ const UserBar = ({ userOpen, setUserOpen }) => {
                     name="birthDate"
                     value={formData.birthDate}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] transition-colors"
+                    className="w-full px-3 py-2 bg-transparent text-[#2D2A26] border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] dark:focus:border-[#93A68F] transition-colors"
                   />
                 </div>
 
@@ -191,7 +191,7 @@ const UserBar = ({ userOpen, setUserOpen }) => {
                     value={formData.phoneNumber}
                     onChange={handleChange}
                     placeholder="e.g. +1 (555) 019-2834"
-                    className="w-full px-3 py-2 border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] transition-colors"
+                    className="w-full px-3 py-2 bg-transparent text-[#2D2A26] border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] dark:focus:border-[#93A68F] transition-colors"
                   />
                 </div>
 
@@ -205,7 +205,7 @@ const UserBar = ({ userOpen, setUserOpen }) => {
                     value={formData.favoriteQuote}
                     onChange={handleChange}
                     placeholder="A message that inspires you"
-                    className="w-full px-3 py-2 border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] transition-colors"
+                    className="w-full px-3 py-2 bg-transparent text-[#2D2A26] border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] dark:focus:border-[#93A68F] transition-colors"
                   />
                 </div>
 
@@ -219,7 +219,7 @@ const UserBar = ({ userOpen, setUserOpen }) => {
                     onChange={handleChange}
                     placeholder="Write a small bio about yourself..."
                     rows={3}
-                    className="w-full px-3 py-2 border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] transition-colors resize-none"
+                    className="w-full px-3 py-2 bg-transparent text-[#2D2A26] border border-[#736E67]/20 rounded-xl text-sm focus:outline-none focus:border-[#7E8F7A] dark:focus:border-[#93A68F] transition-colors resize-none"
                   />
                 </div>
 

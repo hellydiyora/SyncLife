@@ -7,30 +7,29 @@ const Hero = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#2D2A26] font-sans overflow-hidden">
       {/* Elegant Header */}
-      <nav className="flex items-center justify-between px-8 md:px-16 py-6 animate-slideDown">
+      <nav className="flex items-center justify-between px-4 sm:px-8 md:px-16 py-5 animate-slideDown">
         <div className="flex items-center">
-          <span className="font-serif text-2xl font-semibold tracking-wide text-[#2D2A26] dark:text-[#FAF8F5]">
+          <span className="font-serif text-xl sm:text-2xl font-semibold tracking-wide text-[#2D2A26] dark:text-[#FAF8F5]">
             Sync<span className="text-[#7E8F7A] dark:text-[#9EC49A] italic font-normal">Life</span>
           </span>
         </div>
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-2 sm:gap-6 md:gap-8">
           <ThemeToggle />
           <Link
             to="/login"
-            className="text-sm font-medium tracking-wide text-[#736E67] hover:text-[#2D2A26] transition-colors duration-300"
+            className="text-xs sm:text-sm font-medium tracking-wide text-[#736E67] dark:text-[#9E988E] hover:text-[#2D2A26] dark:hover:text-[#FAF8F5] transition-colors duration-300 whitespace-nowrap"
           >
             Log in
           </Link>
           <Link
             to="/signup"
-            className="btn-cozy-primary text-xs tracking-wider uppercase py-2.5 px-6"
+            className="btn-cozy-primary text-[10px] sm:text-xs tracking-wider uppercase py-1.5 px-3 sm:py-2.5 sm:px-6 whitespace-nowrap"
           >
             Sign up
           </Link>
         </div>
       </nav>
 
-      {/* Main Hero Split */}
       <div className="max-w-7xl mx-auto px-8 md:px-16 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         {/* Left Side: Editorial Typography */}
         <div className="lg:col-span-6 flex flex-col items-start text-left">
@@ -53,10 +52,10 @@ const Hero = () => {
 
           {/* Action buttons */}
           <div className="flex flex-wrap items-center gap-4 opacity-0 animate-slideUp delay-400">
-            <Link to="/signup" className="btn-cozy-primary">
+            <Link to="/signup" className="btn-cozy-primary px-6 sm:px-9 py-2.5 sm:py-3">
               Get Started
             </Link>
-            <Link to="/login" className="btn-cozy-outline">
+            <Link to="/login" className="btn-cozy-outline px-6 sm:px-9 py-2.5 sm:py-3">
               Log In
             </Link>
           </div>
