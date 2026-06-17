@@ -4,84 +4,109 @@ import { useState, useEffect } from "react";
 
 const HabitDetails = ({ habit, onClose, onToggleCompletion }) => {
   const [localCompletionStatus, setLocalCompletionStatus] = useState({});
-  const [isDisable, setIsDisable] = useState(false);
 
   useEffect(() => {
     const initialStatus = habit.data.reduce((status, habitDate) => {
-      status[habitDate.date] = habitDate.isCompleted;
+      // Use formatted UTC date as key to match consistently
+      const key = moment.utc(habitDate.date).format("YYYY-MM-DD");
+      status[key] = habitDate.isCompleted;
       return status;
     }, {});
     setLocalCompletionStatus(initialStatus);
   }, [habit.data]);
 
-  const handleToggle = async (habitId, date) => {
+  const handleToggle = async (habitId, rawDate) => {
     try {
+      const formattedDate = moment.utc(rawDate).format("YYYY-MM-DD");
       setLocalCompletionStatus((prevStatus) => ({
         ...prevStatus,
-        [date]: !prevStatus[date],
+        [formattedDate]: !prevStatus[formattedDate],
       }));
 
-      await onToggleCompletion(habitId, date);
+      await onToggleCompletion(habitId, rawDate);
     } catch (error) {
       console.error("Error toggling completion:", error);
     }
   };
 
-  const today = moment();
-  const endDate = moment(habit.endDate);
-
+  const today = moment().startOf('day');
+  // Use UTC to prevent offset issues with endDate
+  const endDate = moment.utc(habit.endDate).startOf('day');
   const isButtonDisabled = endDate.isBefore(today);
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50 "
+      className="fixed inset-0 flex items-center justify-center bg-[#2D2A26]/40 backdrop-blur-sm z-50 p-4"
       onClick={onClose}
     >
       <div
-        className="bgHabitDetail p-8 rounded-md min-w-60 w-80 sm:w-3/4 shadow-lg max-h-96 overflow-y-auto"
+        className="bg-[#FAF8F5] rounded-3xl shadow-2xl border border-[#736E67]/10 w-full max-w-4xl overflow-hidden animate-scaleIn flex flex-col max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-[35px] font-semibold text-slate-800 mb-4 capitalize">
-          {habit.name}
-        </h2>
-        <p className="mb-4  text-gray-700 flex flex-col justify-center sm:flex-row sm:gap-2">
-          <p>
-            <span className="font-bold">Start Date:</span>{" "}
-            {moment(habit.startDate).format("DD-MM-YYYY")}
-          </p>
-          <p>
-            <span className="font-bold">End Date:</span>{" "}
-            {moment(habit.endDate).format("DD-MM-YYYY")}
-          </p>
-        </p>
-        <h3 className="text-xl font-medium mb-2 text-slate-800">
-          Completion Status:
-        </h3>
-        <div>
-          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {habit.data.map((habitDate) => (
-              <li key={habitDate.date} className="mb-2 flex flex-col gap-2">
-                <span className="mr-2 font-semibold text-gray-800">
-                  {moment(habitDate.date).format("DD-MM-YYYY")}:
-                </span>
-                <div>
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-[#736E67]/[0.08] px-6 py-5 bg-white">
+          <div>
+            <p className="text-[#C38A72] text-[10px] font-semibold tracking-wider uppercase mb-0.5">Habit Details</p>
+            <h2 className="font-serif text-2xl font-semibold text-[#2D2A26] capitalize">
+              {habit.name}
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-full hover:bg-[#736E67]/[0.05] text-[#736E67] hover:text-[#2D2A26] transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Info Area */}
+        <div className="bg-[#FAF8F5] px-6 py-4 flex flex-wrap gap-x-8 gap-y-2 border-b border-[#736E67]/[0.04] text-sm text-[#736E67]">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-[#2D2A26]">Start Date:</span>
+            <span className="font-light">{moment.utc(habit.startDate).format("MMMM DD, YYYY")}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-[#2D2A26]">End Date:</span>
+            <span className="font-light">{moment.utc(habit.endDate).format("MMMM DD, YYYY")}</span>
+          </div>
+        </div>
+
+        {/* Grid of Dates */}
+        <div className="p-6 sm:p-8 overflow-y-auto flex-grow">
+          <h3 className="font-serif text-lg font-semibold text-[#2D2A26] mb-5">
+            Completion Tracking
+          </h3>
+          
+          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {habit.data.map((habitDate) => {
+              const formattedKey = moment.utc(habitDate.date).format("YYYY-MM-DD");
+              const isCompleted = localCompletionStatus[formattedKey];
+              return (
+                <li
+                  key={habitDate.date}
+                  className="bg-white rounded-2xl border border-[#736E67]/[0.06] p-4 flex flex-col items-center justify-between text-center gap-3 hover:shadow-sm transition-all duration-300"
+                >
+                  <span className="text-xs font-semibold text-[#736E67] tracking-wider">
+                    {moment.utc(habitDate.date).format("MMM DD, YYYY")}
+                  </span>
+                  
                   <button
                     disabled={isButtonDisabled}
                     onClick={() => handleToggle(habit._id, habitDate.date)}
-                    className={`py-1 px-2 rounded ${
-                      localCompletionStatus[habitDate.date]
-                        ? "bg-green-700"
-                        : "bg-red-700"
-                    } text-white `}
+                    className={`w-full py-2 px-4 rounded-full text-xs font-medium tracking-wide transition-all duration-300 ${
+                      isCompleted
+                        ? "bg-[#7E8F7A] text-white shadow-sm hover:bg-[#6B7D68]"
+                        : "bg-[#C38A72]/10 text-[#C38A72] hover:bg-[#C38A72]/20"
+                    }`}
                     style={{ opacity: isButtonDisabled ? 0.6 : 1 }}
                   >
-                    {localCompletionStatus[habitDate.date]
-                      ? "Completed"
-                      : "Incomplete"}
+                    {isCompleted ? "Completed" : "Incomplete"}
                   </button>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

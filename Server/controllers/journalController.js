@@ -40,15 +40,15 @@ const deleteList = async (req, res) => {
   const { selecteddataId } = req.body;
 
   try {
-    const data = await Journal.findOne({ _id: selecteddataId });
+    const data = await Journal.findOne({ _id: selecteddataId, user_id: req.user._id });
     if (!data) {
-      return res.status(404).json({ message: "Journal not found" });
+      return res.status(404).json({ message: "Journal not found or unauthorized" });
     }
 
     data.data = data.data.filter((item) => item._id.toString() !== id);
 
     if (data.data.length === 0) {
-      await Journal.findByIdAndDelete(selecteddataId);
+      await Journal.deleteOne({ _id: selecteddataId, user_id: req.user._id });
       return res.json({ message: "Document deleted successfully" });
     }
 
@@ -64,10 +64,10 @@ const updateList = async (req, res) => {
   const { updatedList, dataId, isCompleted } = req.body;
 
   try {
-    const data = await Journal.findOne({ _id: dataId });
+    const data = await Journal.findOne({ _id: dataId, user_id: req.user._id });
     
     if (!data) {
-      return res.status(404).json({ message: "List not found" });
+      return res.status(404).json({ message: "List not found or unauthorized" });
     }
 
     if (!data.data) {
@@ -98,10 +98,10 @@ const completeList = async (req, res) => {
   const { dataId } = req.body;
 
   try {
-    const journal = await Journal.findOne({ _id: dataId });
+    const journal = await Journal.findOne({ _id: dataId, user_id: req.user._id });
 
     if (!journal) {
-      return res.status(404).json({ message: "Journal not found" });
+      return res.status(404).json({ message: "Journal not found or unauthorized" });
     }
 
     const list = journal.data.find((item) => item._id.toString() === id);
@@ -110,21 +110,14 @@ const completeList = async (req, res) => {
       return res.status(404).json({ message: "List not found" });
     }
 
-    if (list.isCompleted) {
-      return res.json({
-        message: "Button state already clicked",
-        isCompleted: list.isCompleted,
-      });
-    } else {
-      list.isCompleted = true;
+    list.isCompleted = !list.isCompleted;
 
-      journal.markModified("data");
+    journal.markModified("data");
 
-      await journal.save();
-    }
+    await journal.save();
 
     res.json({
-      message: "List completed successfully",
+      message: "List completed status updated successfully",
       isCompleted: list.isCompleted,
     });
   } catch (error) {

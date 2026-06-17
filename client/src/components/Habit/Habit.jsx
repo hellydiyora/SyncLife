@@ -12,7 +12,10 @@ import HabitDetails from "./HabitDetails";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
 import { selectUser } from "../../reducers/authSlice";
+import { HabitSkeleton } from "../Skeletons";
+import Confetti from "../Confetti";
 import ConfirmBox from "../ConfirmBox";
+import { useToast } from "../Toast/ToastContext";
 import moment from "moment";
 
 const Habit = () => {
@@ -36,6 +39,9 @@ const Habit = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [updateConfirm, setUpdateConfirm] = useState(false);
   const [updateError, setUpdateError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [confettiActive, setConfettiActive] = useState(false);
+  const { showToast } = useToast();
 
   const user = useSelector(selectUser);
 
@@ -49,6 +55,8 @@ const Habit = () => {
       }
     } catch (error) {
       console.log("error in fetching habits: ", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,8 +95,10 @@ const Habit = () => {
         startDate: "",
         endDate: "",
       });
+      showToast("Habit added successfully!", "success");
     } catch (error) {
       console.error("Error submitting habit:", error);
+      showToast("Failed to add habit.", "error");
     }
   };
 
@@ -119,9 +129,11 @@ const Habit = () => {
           habitId: null,
         });
         fetchAndSetHabits();
+        showToast("Habit updated successfully.", "success");
       }
     } catch (error) {
       console.error("Error in updating habits: ", error);
+      showToast("Failed to update habit.", "error");
     }
   };
 
@@ -141,22 +153,38 @@ const Habit = () => {
       if (user) {
         await dispatch(deleteHabit({ habitId: id, userToken: user.token }));
         fetchAndSetHabits();
+        showToast("Habit deleted successfully.", "success");
       }
     } catch (error) {
       console.log("Error in deleting habits: ", error);
+      showToast("Failed to delete habit.", "error");
     }
   };
 
   const handleToggle = async (habitId, date) => {
     try {
       if (user) {
+        const targetHabit = habits.find((h) => h._id === habitId);
+        const dateObj = targetHabit?.data.find(
+          (d) => moment.utc(d.date).format("YYYY-MM-DD") === moment.utc(date).format("YYYY-MM-DD")
+        );
+        const wasCompleted = dateObj ? dateObj.isCompleted : false;
+
         await dispatch(
           toggleCompletion({ habitId, date, userToken: user.token })
         );
         fetchAndSetHabits();
+
+        if (!wasCompleted) {
+          setConfettiActive(true);
+          showToast("Great job completing your habit! Keep it up!", "success");
+        } else {
+          showToast("Habit marked as incomplete.", "info");
+        }
       }
     } catch (error) {
       console.error("Error toggling completion:", error);
+      showToast("Failed to update habit progress.", "error");
     }
   };
 
@@ -271,261 +299,281 @@ const Habit = () => {
     }
     setUpdateConfirm(true);
   };
+  
   const today = moment();
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-[#FAF8F5] text-[#2D2A26] font-sans">
+      <Confetti active={confettiActive} onClose={() => setConfettiActive(false)} />
       <Navbar />
-      <div className="grid grid-cols-1 md:grid-cols-2 h-full p-10 gap-8 bg-gray-100 flex-grow ">
-        <div className="flex flex-col items-center">
-          <span>
-            <h2 className="text-4xl signup:text-5xl mb-4 font-mainTag text-slate-900">
-              <span className="text-slate-950 ">G</span>oal
-              <span className="text-slate-950 ">M</span>inder
-            </h2>
-          </span>
-          {updateFormVisible ? (
-            <div className="cardBG p-8  rounded-lg">
-              <form
-                onSubmit={handleUpdateClick}
-                className="flex flex-col gap-4"
-              >
-                <span>
-                  <h2 className="font-subTag font-bold text-3xl text-blue-900">
-                    <span className=" text-blue-950">U</span>pdate
-                    <span className=" text-blue-950 "> H</span>abit
-                  </h2>
-                </span>
-                <label>
-                  <span className="text-lg font-semibold text-gray-900">
-                    Habit Name:
-                  </span>
+
+      {/* Header */}
+      <div className="py-12 px-6 max-w-7xl mx-auto w-full text-center">
+        <p className="text-[#C38A72] text-xs font-semibold tracking-[0.3em] uppercase mb-2">Routines</p>
+        <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-[#2D2A26]">
+          Goal<span className="text-[#7E8F7A] italic font-normal">Minder</span>
+        </h1>
+      </div>
+
+      <div className="max-w-7xl mx-auto w-full px-6 md:px-12 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start flex-grow">
+        {/* Left Side Form */}
+        <div className="lg:col-span-5 w-full flex flex-col items-center">
+          <div className="w-full bg-white rounded-2xl border border-[#736E67]/[0.08] shadow-sm p-6 sm:p-8 text-left">
+            {updateFormVisible ? (
+              <form onSubmit={handleUpdateClick} className="space-y-6">
+                <h3 className="font-serif text-xl font-semibold text-[#2D2A26] mb-2">
+                  Update Habit
+                </h3>
+                <div className="flex flex-col">
+                  <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1">
+                    Habit Name
+                  </label>
                   <input
-                    className="form-input mt-1 w-full p-3 shadow-md shadow-slate-500 rounded-md bg-white placeholder-slate-900"
+                    className="input-cozy"
                     type="text"
                     name="name"
                     value={updateHabit.name}
                     onChange={handleUpdateChange}
                     placeholder="Enter updated habit name"
                   />
-                </label>
-                <label>
-                  <span className="text-lg font-semibold text-gray-900">
-                    Start Date:
-                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1">
+                    Start Date
+                  </label>
                   <input
-                    className="form-input mt-1 w-full p-3 shadow-md shadow-slate-500 rounded-md bg-white  placeholder-slate-900"
+                    className="input-cozy text-[#736E67]"
                     type="date"
                     name="startDate"
-                    value={moment(updateHabit.startDate).format("YYYY-MM-DD")}
+                    value={moment.utc(updateHabit.startDate).format("YYYY-MM-DD")}
                     onChange={handleUpdateChange}
                   />
-                </label>
-                <label>
-                  <span className="text-lg font-semibold text-gray-900">
-                    End Date:
-                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1">
+                    End Date
+                  </label>
                   <input
-                    className="form-input mt-1 w-full p-3 shadow-md shadow-slate-500 rounded-md  bg-white placeholder-slate-900"
+                    className="input-cozy text-[#736E67]"
                     type="date"
                     name="endDate"
-                    value={moment(updateHabit.endDate).format("YYYY-MM-DD")}
+                    value={moment.utc(updateHabit.endDate).format("YYYY-MM-DD")}
                     onChange={handleUpdateChange}
                   />
-                </label>
+                </div>
                 {updateError && (
-                  <p className="text-red-500 text-sm">{updateError}</p>
+                  <p className="text-[#D66B6B] text-xs font-light">{updateError}</p>
                 )}
-                <button
-                  className="bg-slate-600 mt-5 text-white shadow-md shadow-black hover:bg-slate-400 font-bold py-3 px-6 rounded-md transition duration-300 ease-in-out"
-                  type="submit"
-                >
-                  Update Habit
-                </button>
+                <div className="flex gap-3 pt-2">
+                  <button className="btn-cozy-primary flex-1 py-3" type="submit">
+                    Update
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleUpdateCancel}
+                    className="btn-cozy-outline flex-1 py-3"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </form>
-            </div>
-          ) : (
-            <div className="cardBG  p-4 md:p-8 max-w-96 rounded-lg">
-              <span>
-                <h2 className="font-subTag font-bold text-3xl text-slate-700 mb-4">
-                  <span className=" text-slate-800">A</span>dd
-                  <span className=" text-slate-800 "> H</span>abit
-                </h2>
-              </span>
-              <form onSubmit={handleAddClick}>
-                <label>
-                  <span className="text-lg font-semibold text-gray-900">
-                    Habit Name:
-                  </span>
+            ) : (
+              <form onSubmit={handleAddClick} className="space-y-6">
+                <h3 className="font-serif text-xl font-semibold text-[#2D2A26] mb-2">
+                  Add New Habit
+                </h3>
+                <div className="flex flex-col">
+                  <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1">
+                    Habit Name
+                  </label>
                   <input
-                    className="border-2 border-gray-200 my-1 w-full p-3 shadow-md shadow-slate-500 rounded-md mr-2 placeholder-slate-900"
+                    className="input-cozy"
                     type="text"
                     name="name"
                     value={habit.name}
                     onChange={handleChange}
-                    placeholder="Enter habit name"
+                    placeholder="e.g. Morning Meditation, Reading"
                   />
                   {nameError && (
-                    <p className="text-red-500 text-sm">{nameError}</p>
+                    <p className="text-[#D66B6B] text-xs mt-1.5 font-light">{nameError}</p>
                   )}
-                </label>
-                <label>
-                  <span className="text-lg font-semibold text-gray-900">
-                    Start Date:
-                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1">
+                    Start Date
+                  </label>
                   <input
-                    className="form-input  border-2 bg-white border-gray-200 my-1 w-full p-3 shadow-md shadow-slate-500 rounded-md mr-2  placeholder-slate-900"
+                    className="input-cozy text-[#736E67]"
                     type="date"
                     name="startDate"
                     value={habit.startDate}
                     onChange={handleChange}
                   />
                   {startDateError && (
-                    <p className="text-red-500 text-sm">{startDateError}</p>
+                    <p className="text-[#D66B6B] text-xs mt-1.5 font-light">{startDateError}</p>
                   )}
-                </label>
-                <label>
-                  <span className="text-lg font-semibold text-gray-900">
-                    End Date:
-                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1">
+                    End Date
+                  </label>
                   <input
-                    className="form-input border-2 bg-white border-gray-200 my-1 w-full p-3 shadow-md shadow-slate-500 rounded-md mr-2  placeholder-slate-900"
+                    className="input-cozy text-[#736E67]"
                     type="date"
                     name="endDate"
                     value={habit.endDate}
                     onChange={handleChange}
                   />
                   {endDateError && (
-                    <p className="text-red-500 text-sm">{endDateError}</p>
+                    <p className="text-[#D66B6B] text-xs mt-1.5 font-light">{endDateError}</p>
                   )}
-                </label>
-
-                <button
-                  className="bg-slate-600 mt-5 text-white shadow-md shadow-black hover:bg-slate-400 font-bold py-3 px-6 rounded-md transition duration-300 ease-in-out"
-                  type="submit"
-                >
-                  Add Habit
+                </div>
+                <button className="btn-cozy-primary w-full py-3 pt-2" type="submit">
+                  Create Habit
                 </button>
               </form>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-        <div className="flex flex-col gap-4">
-          <h2 className="font-subTag text-4xl text-slate-900 pb-5">
-            Habit Lists
-          </h2>
-          {habits && habits.length === 0 ? (
-            <p className="text-gray-500 text-lg">No data available</p>
+
+        {/* Right Side Column — Habits List */}
+        <div className="lg:col-span-7 w-full bg-white rounded-2xl border border-[#736E67]/[0.08] shadow-sm p-6 sm:p-8">
+          <h3 className="font-serif text-2xl font-semibold text-[#2D2A26] text-left pb-4 border-b border-[#736E67]/[0.06] mb-6">
+            Active Habits
+          </h3>
+
+          {loading ? (
+            <HabitSkeleton />
+          ) : habits && habits.length === 0 ? (
+            <div className="py-16 text-center">
+              <svg className="w-12 h-12 mx-auto text-[#736E67]/30 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              <p className="text-[#736E67]/60 text-base font-light">No habits registered yet.</p>
+            </div>
           ) : (
-            <div>
-              <ul className="grid gap-4 2xl:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-1 signup:grid-cols-2 ">
+            <div className="space-y-8">
+              {/* Active list grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {habits &&
                   habits
-                    .filter((data) => moment(data.endDate).isAfter(today))
+                    .filter((data) => moment.utc(data.endDate).isAfter(today))
                     .map((habit) => (
-                      <li
+                      <div
                         key={habit._id}
-                        className="w-52 signup:w-auto bgHabit m-2 rounded-md p-4 shadow-sm shadow-black"
+                        className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.06] p-5 hover:border-[#7E8F7A]/30 transition-all duration-300 flex flex-col justify-between group"
                       >
-                        <div className="flex flex-col justify-center gap-5">
-                          <span className="text-4xl font-subTag text-gray-700 capitalize">
+                        <div className="text-left mb-4">
+                          <h4 className="font-serif text-lg font-semibold text-[#2D2A26] capitalize">
                             {habit.name}
-                          </span>
-                          <span className="flex flex-col signup:flex-col xl:flex-row justify-center gap-3">
-                            <button
-                              className="btnH  p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
-                              onClick={() => showHabitDetails(habit)}
-                            >
-                              Status
-                            </button>
-                            <button
-                              className="btnH p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
-                              onClick={() => handleDeleteClick(habit._id)}
-                            >
-                              Delete
-                            </button>
-                            <button
-                              className="btnH p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
-                              onClick={() => handleUpdateButtonClick(habit)}
-                            >
-                              Update
-                            </button>
-                          </span>
+                          </h4>
+                          <p className="text-[#736E67] text-xs font-light mt-1">
+                            {moment.utc(habit.startDate).format("MMM DD")} — {moment.utc(habit.endDate).format("MMM DD, YYYY")}
+                          </p>
                         </div>
-                      </li>
+                        <div className="grid grid-cols-3 gap-2">
+                          <button
+                            className="py-1.5 px-2 bg-white text-xs font-medium text-[#7E8F7A] border border-[#7E8F7A]/20 rounded-lg hover:bg-[#7E8F7A] hover:text-white transition duration-300 shadow-sm"
+                            onClick={() => showHabitDetails(habit)}
+                          >
+                            Status
+                          </button>
+                          <button
+                            className="py-1.5 px-2 bg-white text-xs font-medium text-[#736E67] border border-[#736E67]/20 rounded-lg hover:border-[#2D2A26] hover:text-[#2D2A26] transition duration-300 shadow-sm"
+                            onClick={() => handleUpdateButtonClick(habit)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="py-1.5 px-2 bg-white text-xs font-medium text-[#D66B6B] border border-[#D66B6B]/20 rounded-lg hover:bg-[#D66B6B] hover:text-white transition duration-300 shadow-sm"
+                            onClick={() => handleDeleteClick(habit._id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
                     ))}
-              </ul>
-              {habits &&
-                habits
-                  .filter((data) => moment(data.endDate).isBefore(today))
-                  .map((habit) => (
-                    <p className="p-2 text-lg text-gray-500 ">Expired Habits</p>
-                  ))}
-              <ul className="grid gap-4 2xl:grid-cols-2 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-1 signup:grid-cols-2 ">
-                {habits &&
-                  habits
-                    .filter((data) => moment(data.endDate).isBefore(today))
-                    .map((habit) => (
-                      <div className="">
-                        <li
-                          key={habit._id}
-                          className="w-52 signup:w-auto bgHabitExpired m-2 rounded-md p-4 shadow-sm shadow-black"
-                        >
-                          <div className="flex flex-col justify-center gap-5">
-                            <span className="text-4xl font-subTag text-gray-600 capitalize">
-                              {habit.name}
-                            </span>
-                            <span className="flex flex-col signup:flex-col xl:flex-row justify-center gap-3 ">
+              </div>
+
+              {/* Expired list block */}
+              {habits && habits.filter((data) => moment.utc(data.endDate).isBefore(today)).length > 0 && (
+                <div className="pt-6 border-t border-[#736E67]/[0.08]">
+                  <h4 className="text-sm font-semibold tracking-wider text-[#736E67]/70 uppercase text-left mb-4">
+                    Expired Habits
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {habits &&
+                      habits
+                        .filter((data) => moment.utc(data.endDate).isBefore(today))
+                        .map((habit) => (
+                          <div
+                            key={habit._id}
+                            className="bg-[#F4F1EC]/60 rounded-xl border border-[#736E67]/[0.06] p-5 flex flex-col justify-between opacity-70 hover:opacity-100 transition-opacity"
+                          >
+                            <div className="text-left mb-4">
+                              <h4 className="font-serif text-lg font-semibold text-[#736E67] capitalize line-through">
+                                {habit.name}
+                              </h4>
+                              <p className="text-[#736E67]/80 text-xs font-light mt-1">
+                                {moment.utc(habit.startDate).format("MMM DD")} — {moment.utc(habit.endDate).format("MMM DD, YYYY")} (Ended)
+                              </p>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2">
                               <button
-                                className="btnH text-gray-600  p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                                className="py-1.5 px-2 bg-white text-xs font-medium text-[#7E8F7A] border border-[#7E8F7A]/20 rounded-lg hover:bg-[#7E8F7A] hover:text-white transition duration-300"
                                 onClick={() => showHabitDetails(habit)}
                               >
                                 Status
                               </button>
                               <button
-                                className="btnH text-gray-600 p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
+                                className="py-1.5 px-2 bg-white text-xs font-medium text-[#736E67] border border-[#736E67]/20 rounded-lg hover:border-[#2D2A26] hover:text-[#2D2A26] transition duration-300"
+                                onClick={() => handleUpdateButtonClick(habit)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="py-1.5 px-2 bg-white text-xs font-medium text-[#D66B6B] border border-[#D66B6B]/20 rounded-lg hover:bg-[#D66B6B] hover:text-white transition duration-300"
                                 onClick={() => handleDeleteClick(habit._id)}
                               >
                                 Delete
                               </button>
-                              <button
-                                className="btnH text-gray-600 p-2 rounded-md transition duration-300 ease-in-out shadow-sm shadow-gray-800"
-                                onClick={() => handleUpdateButtonClick(habit)}
-                              >
-                                Update
-                              </button>
-                            </span>
+                            </div>
                           </div>
-                        </li>
-                      </div>
-                    ))}
-              </ul>
+                        ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
-        {habitDetailsVisible && (
-          <HabitDetails
-            habit={selectedHabit}
-            onClose={closeHabitDetails}
-            onToggleCompletion={handleToggle}
-          />
-        )}
       </div>
+
+      {/* Habit detail drawer modal component */}
+      {habitDetailsVisible && (
+        <HabitDetails
+          habit={selectedHabit}
+          onClose={closeHabitDetails}
+          onToggleCompletion={handleToggle}
+        />
+      )}
+
       <Footer />
+      
       <ConfirmBox
         visible={deleteConfirm}
-        message="Do you want to delete Habit?"
+        message="Are you sure you want to delete this habit?"
         onCancel={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
       />
       <ConfirmBox
         visible={addConfirm}
-        message="Are you sure?"
+        message="Are you sure you want to register this habit?"
         onCancel={handleAddCancel}
         onConfirm={handleAddConfirm}
       />
       <ConfirmBox
         visible={updateConfirm}
-        message="Data already exist. Do you want to update it?"
+        message="Are you sure you want to update this habit?"
         onCancel={handleUpdateCancel}
         onConfirm={handleUpdateConfirm}
       />

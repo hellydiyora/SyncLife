@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { Pie } from "react-chartjs-2";
-import Select from "@mui/material/Select";
-import { MenuItem } from "@mui/material";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -17,7 +15,7 @@ const JournalProgress = () => {
   const dispatch = useDispatch();
   const [view, setView] = useState("daily");
   const [selectedDate, setSelectedDate] = useState(
-    moment().format("YYYY-MM-DD")
+    moment.utc().format("YYYY-MM-DD")
   );
 
   const fetchTasks = async () => {
@@ -37,362 +35,218 @@ const JournalProgress = () => {
     fetchTasks();
   }, [dispatch]);
 
-  const toggleView = (selectedView) => {
-    setView(selectedView);
+  const chartColors = {
+    backgroundColor: ["rgba(195,138,114,0.25)", "rgba(126,143,122,0.35)"],
+    borderColor: ["#C38A72", "#7E8F7A"],
+  };
+
+  const makeChartData = (incomplete, complete) => ({
+    labels: ["Incomplete", "Completed"],
+    datasets: [
+      {
+        label: "Tasks",
+        data: [incomplete, complete],
+        backgroundColor: chartColors.backgroundColor,
+        borderColor: chartColors.borderColor,
+        borderWidth: 2,
+      },
+    ],
+  });
+
+  const chartOptions = {
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          font: { family: "'Inter', sans-serif", size: 12 },
+          color: "#736E67",
+          padding: 16,
+          usePointStyle: true,
+          boxWidth: 8,
+          boxHeight: 8,
+          pointStyle: "circle",
+        },
+      },
+    },
   };
 
   /**Daily View */
+  const today = moment().format("YYYY-MM-DD");
   const totaltask =
     lists &&
     lists.filter((list) => {
-      const listDate = moment(new Date(list.date)).format("YYYY-MM-DD");
-      const currentDate = moment(new Date()).format("YYYY-MM-DD");
-      return listDate === currentDate;
+      const listDate = moment.utc(new Date(list.date)).format("YYYY-MM-DD");
+      return listDate === today;
     });
 
   const totalTasksToday = totaltask[0] ? totaltask[0].data.length : 0;
-
   const dailyCompletedTasks = totaltask[0]
     ? totaltask[0].data.filter((task) => task.isCompleted).length
     : 0;
-
   const dailyIncompletedTasks = totaltask[0]
     ? totaltask[0].data.filter((task) => !task.isCompleted).length
     : 0;
 
-  const dailyData = {
-    labels: ["Incompleted", "Completed"],
-    datasets: [
-      {
-        label: "Number of tasks",
-        data: [dailyIncompletedTasks, dailyCompletedTasks],
-        backgroundColor: ["rgb(255, 99, 132 , 0.5)", "rgb(54, 162, 235 , 0.5)"],
-        borderColor: ["rgba(255, 19, 19, 0.5)", "rgba(19, 19, 235, 0.5)"],
-        borderWidth: 1,
-      },
-    ],
-  };
-
   /**Weekly View */
-
-  const today = moment().format("YYYY-MM-DD");
   const lastweek = moment(today).subtract(7, "days").format("YYYY-MM-DD");
   const weeklytask =
     lists &&
     lists.filter(
       (list) =>
-        moment(new Date(list.date)).format("YYYY-MM-DD") >= lastweek &&
-        moment(new Date(list.date)).format("YYYY-MM-DD") <= today
+        moment.utc(new Date(list.date)).format("YYYY-MM-DD") >= lastweek &&
+        moment.utc(new Date(list.date)).format("YYYY-MM-DD") <= today
     );
   const totalweektask = weeklytask[0]
     ? weeklytask.map((task) => task.data.length).reduce((acc, cv) => acc + cv)
     : 0;
-
   const weeklyCompletedTasks = weeklytask
-    ? weeklytask.flatMap((task) => task.data).filter((task) => task.isCompleted)
-        .length
+    ? weeklytask.flatMap((task) => task.data).filter((task) => task.isCompleted).length
     : 0;
   const weeklyIncompletedTasks = weeklytask
-    ? weeklytask
-        .flatMap((task) => task.data)
-        .filter((task) => !task.isCompleted).length
+    ? weeklytask.flatMap((task) => task.data).filter((task) => !task.isCompleted).length
     : 0;
-
-  const weekData = {
-    labels: ["Incompleted", "Completed"],
-    datasets: [
-      {
-        label: "Number of tasks",
-        data: [weeklyIncompletedTasks, weeklyCompletedTasks],
-        backgroundColor: ["rgb(255, 99, 132 , 0.5)", "rgb(54, 162, 235 , 0.5)"],
-        borderColor: ["rgba(255, 19, 19, 0.5)", "rgba(19, 19, 235, 0.5)"],
-        borderWidth: 1,
-      },
-    ],
-  };
 
   /**Monthly View */
   const startOfMonth = moment(today).startOf("month").format("YYYY-MM-DD");
-
   const monthlyTask =
     lists &&
     lists.filter(
       (list) =>
-        moment(new Date(list.date)).format("YYYY-MM-DD") >= startOfMonth &&
-        moment(new Date(list.date)).format("YYYY-MM-DD") <= today
+        moment.utc(new Date(list.date)).format("YYYY-MM-DD") >= startOfMonth &&
+        moment.utc(new Date(list.date)).format("YYYY-MM-DD") <= today
     );
-
   const totalMonthlytask = monthlyTask[0]
     ? monthlyTask.map((task) => task.data.length).reduce((acc, cv) => acc + cv)
     : 0;
-
   const monthlyCompletedTasks = monthlyTask
-    ? monthlyTask
-        .flatMap((task) => task.data)
-        .filter((task) => task.isCompleted).length
+    ? monthlyTask.flatMap((task) => task.data).filter((task) => task.isCompleted).length
     : 0;
-
   const monthlyIncompletedTasks = monthlyTask
-    ? monthlyTask
-        .flatMap((task) => task.data)
-        .filter((task) => !task.isCompleted).length
+    ? monthlyTask.flatMap((task) => task.data).filter((task) => !task.isCompleted).length
     : 0;
-
-  const monthData = {
-    labels: ["Incompleted", "Completed"],
-    datasets: [
-      {
-        label: "Number of tasks",
-        data: [monthlyIncompletedTasks, monthlyCompletedTasks],
-        backgroundColor: ["rgb(255, 99, 132 , 0.5)", "rgb(54, 162, 235 , 0.5)"],
-        borderColor: ["rgba(255, 19, 19, 0.5)", "rgba(19, 19, 235, 0.5)"],
-        borderWidth: 1,
-      },
-    ],
-  };
 
   /**Yearly View */
-
   const startOfYear = moment(today).startOf("year").format("YYYY-MM-DD");
-
   const yearlyTask =
     lists &&
     lists.filter(
       (list) =>
-        moment(new Date(list.date)).format("YYYY-MM-DD") >= startOfYear &&
-        moment(new Date(list.date)).format("YYYY-MM-DD") <= today
+        moment.utc(new Date(list.date)).format("YYYY-MM-DD") >= startOfYear &&
+        moment.utc(new Date(list.date)).format("YYYY-MM-DD") <= today
     );
-
   const yearlyTotalTask = yearlyTask[0]
     ? yearlyTask.map((task) => task.data.length).reduce((acc, cv) => acc + cv)
     : 0;
-
   const yearlyCompletedTask = yearlyTask
-    ? yearlyTask.flatMap((task) => task.data).filter((task) => task.isCompleted)
-        .length
+    ? yearlyTask.flatMap((task) => task.data).filter((task) => task.isCompleted).length
     : 0;
-
   const yearlyInompletedTask = yearlyTask
-    ? yearlyTask
-        .flatMap((task) => task.data)
-        .filter((task) => !task.isCompleted).length
+    ? yearlyTask.flatMap((task) => task.data).filter((task) => !task.isCompleted).length
     : 0;
-
-  const yearData = {
-    labels: ["Incompleted", "Completed"],
-    datasets: [
-      {
-        label: "Number of tasks",
-        data: [yearlyInompletedTask, yearlyCompletedTask],
-        backgroundColor: ["rgb(255, 99, 132 , 0.5)", "rgb(54, 162, 235 , 0.5)"],
-        borderColor: ["rgba(255, 19, 19, 0.5)", "rgba(19, 19, 235, 0.5)"],
-        borderWidth: 1,
-      },
-    ],
-  };
 
   /**search date */
-
   const handleDateChange = (event) => {
     const newDate = event.target.value;
     setSelectedDate(newDate);
-    toggleView("search");
-    console.log(selectedDate);
+    setView("search");
   };
 
   const selectedDateTasks =
     lists &&
     lists.filter(
       (list) =>
-        moment(new Date(list.date)).format("YYYY-MM-DD") === selectedDate
+        moment.utc(new Date(list.date)).format("YYYY-MM-DD") === selectedDate
     );
-
   const totalSelectedDateTasks = selectedDateTasks[0]
-    ? selectedDateTasks
-        .map((task) => task.data.length)
-        .reduce((acc, cv) => acc + cv)
+    ? selectedDateTasks.map((task) => task.data.length).reduce((acc, cv) => acc + cv)
     : 0;
-
   const completedSelectedDateTasks = selectedDateTasks
-    ? selectedDateTasks
-        .flatMap((task) => task.data)
-        .filter((task) => task.isCompleted).length
+    ? selectedDateTasks.flatMap((task) => task.data).filter((task) => task.isCompleted).length
     : 0;
-
   const incompletedSelectedDateTasks = selectedDateTasks
-    ? selectedDateTasks
-        .flatMap((task) => task.data)
-        .filter((task) => !task.isCompleted).length
+    ? selectedDateTasks.flatMap((task) => task.data).filter((task) => !task.isCompleted).length
     : 0;
 
-  const selectedDateData = {
-    labels: ["Incompleted", "Completed"],
-    datasets: [
-      {
-        label: "Number of tasks",
-        data: [incompletedSelectedDateTasks, completedSelectedDateTasks],
-        backgroundColor: ["rgb(255, 99, 132 , 0.5)", "rgb(54, 162, 235 , 0.5)"],
-        borderColor: ["rgba(255, 19, 19, 0.5)", "rgba(19, 19, 235, 0.5)"],
-        borderWidth: 1,
-      },
-    ],
+  const viewButtons = [
+    { key: "daily", label: "Today" },
+    { key: "weekly", label: "Week" },
+    { key: "monthly", label: "Month" },
+    { key: "yearly", label: "Year" },
+  ];
+
+  const getViewData = () => {
+    switch (view) {
+      case "daily":
+        return { total: totalTasksToday, data: makeChartData(dailyIncompletedTasks, dailyCompletedTasks), label: "Today's Overview" };
+      case "weekly":
+        return { total: totalweektask, data: makeChartData(weeklyIncompletedTasks, weeklyCompletedTasks), label: "This Week" };
+      case "monthly":
+        return { total: totalMonthlytask, data: makeChartData(monthlyIncompletedTasks, monthlyCompletedTasks), label: "This Month" };
+      case "yearly":
+        return { total: yearlyTotalTask, data: makeChartData(yearlyInompletedTask, yearlyCompletedTask), label: "This Year" };
+      case "search":
+        return { total: totalSelectedDateTasks, data: makeChartData(incompletedSelectedDateTasks, completedSelectedDateTasks), label: moment(selectedDate).format("MMMM D, YYYY") };
+      default:
+        return { total: 0, data: makeChartData(0, 0), label: "" };
+    }
   };
 
-  const handleChange = (event) => {
-    toggleView(event.target.value);
-  };
+  const currentView = getViewData();
+
   return (
-    <div>
-      <h1 className="text-5xl underline decoration-1 font-subTag mb-2">
-        TaskMate
-      </h1>
-      <div className="flex flex-col min-h-96 items-center mb-10">
-        <div className="py-7 px-2 rounded-md flex-col sm:flex-row items-center gap-6">
-          <div className="flex flex-col signup:flex-row items-center">
-            {" "}
-            <p className="pr-3 text-lg font-sans">Search data for:</p>
-            <input
-              type="date"
-              className="bg-inherit shadow-xl shadow-stone-300 border-stone-600 border-[1px] p-2 rounded-md hover:border-stone-500"
-              value={selectedDate}
-              onChange={handleDateChange}
-            />
-          </div>
-
-          <Select
-            onChange={handleChange}
-            style={{
-              color: "black",
-              backgroundColor: "inherit",
-              height: "44px",
-              fontSize: "20px",
-            }}
-            sx={{
-              "& fieldset": { border: "none" },
-              ":hover": { borderColor: "red", backgroundColor: "red" },
-            }}
-            defaultValue="daily"
-          >
-            <MenuItem
-              value="daily"
-              style={{
-                color: "black",
-                backgroundColor: " rgb(231 229 228)",
-                height: "44px",
-              }}
+    <div className="space-y-8">
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-2 bg-[#FAF8F5] p-1 rounded-full border border-[#736E67]/[0.08]">
+          {viewButtons.map((btn) => (
+            <button
+              key={btn.key}
+              onClick={() => setView(btn.key)}
+              className={`py-2 px-4 rounded-full text-xs font-medium tracking-wide transition-all duration-300 ${view === btn.key
+                  ? "bg-[#7E8F7A] text-white shadow-sm"
+                  : "text-[#736E67] hover:text-[#2D2A26]"
+                }`}
             >
-              Daily View
-            </MenuItem>
-            <MenuItem
-              value="weekly"
-              style={{
-                color: "black",
-                backgroundColor: " rgb(231 229 228)",
-                height: "44px",
-              }}
-            >
-              Weekly View
-            </MenuItem>
-            <MenuItem
-              value="monthly"
-              style={{
-                color: "black",
-                backgroundColor: " rgb(231 229 228)",
-                height: "44px",
-              }}
-            >
-              Monthly View
-            </MenuItem>
-            <MenuItem
-              value="yearly"
-              style={{
-                color: "black",
-                backgroundColor: " rgb(231 229 228)",
-                height: "44px",
-              }}
-            >
-              Yearly View
-            </MenuItem>
-          </Select>
+              {btn.label}
+            </button>
+          ))}
         </div>
-        {view === "yearly" ? (
-          <div className=" flex flex-col items-center">
-            {yearlyTotalTask === 0 ? (
-              <p>No data available</p>
-            ) : (
-              <div>
-                <h1 className="text-2xl font-mono">Analysis of this YEAR</h1>
-                <p>Total task : {yearlyTotalTask}</p>
-                <div className="w-60 signup:w-80  my-4">
-                  <Pie data={yearData} />
-                </div>
-              </div>
-            )}
-          </div>
-        ) : view === "monthly" ? (
-          <div className="flex flex-col items-center">
-            {totalMonthlytask === 0 ? (
-              <p>No data available</p>
-            ) : (
-              <div>
-                <h1 className="text-2xl font-mono">Analysis of this MONTH</h1>
-                <p>Total task : {totalMonthlytask}</p>
-                <div className="w-60 signup:w-80  my-4">
-                  <Pie data={monthData} />
-                </div>
-              </div>
-            )}
-          </div>
-        ) : view === "weekly" ? (
-          <div className="flex flex-col items-center">
-            {totalweektask === 0 ? (
-              <p>No data available</p>
-            ) : (
-              <div>
-                {" "}
-                <h1 className="text-2xl font-mono">Analysis of a WEEK</h1>
-                <p>Total task : {totalweektask}</p>
-                <div className="w-60 signup:w-80  my-4">
-                  <Pie data={weekData} />
-                </div>
-              </div>
-            )}
-          </div>
-        ) : view === "daily" ? (
-          <div className="flex flex-col items-center">
-            {totalTasksToday === 0 ? (
-              <p>No data available</p>
-            ) : (
-              <div>
-                <h1 className="text-2xl font-mono">Today's data</h1>
-                <p>Total task : {totalTasksToday} </p>
-                <div className="w-60 signup:w-80 my-4">
-                  <Pie data={dailyData} />
-                </div>
-              </div>
-            )}
+
+        <div className="flex items-center gap-3">
+          <span className="text-[#736E67] text-xs font-semibold tracking-wider uppercase">Search:</span>
+          <input
+            type="date"
+            className="input-cozy text-sm text-[#736E67] !py-2 !px-3 max-w-[160px]"
+            value={selectedDate}
+            onChange={handleDateChange}
+          />
+        </div>
+      </div>
+
+      {/* Chart Display */}
+      <div className="flex flex-col items-center text-center py-4">
+        <p className="text-[#C38A72] text-[10px] font-semibold tracking-wider uppercase mb-1">
+          {currentView.label}
+        </p>
+
+        {currentView.total === 0 ? (
+          <div className="py-12">
+            <svg className="w-10 h-10 mx-auto text-[#736E67]/30 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <p className="text-[#736E67]/60 text-sm font-light">No data available</p>
           </div>
         ) : (
-          view === "search" && (
-            <div className="flex flex-col items-center">
-              {totalSelectedDateTasks === 0 ? (
-                <p>No data available</p>
-              ) : (
-                <div>
-                  <h1 className="text-2xl font-mono">
-                    Tasks on {moment(selectedDate).format("MMMM D, YYYY")}
-                  </h1>
-                  <p>Total task: {totalSelectedDateTasks}</p>
-                  <div className="w-60 signup:w-80 my-4">
-                    <Pie data={selectedDateData} />
-                  </div>
-                </div>
-              )}
+          <div className="space-y-4">
+            <p className="text-[#2D2A26] font-serif text-2xl font-semibold">
+              {currentView.total} <span className="text-base font-sans font-normal text-[#736E67]">tasks</span>
+            </p>
+            <div className="w-52 sm:w-64 mx-auto">
+              <Pie data={currentView.data} options={chartOptions} />
             </div>
-          )
+          </div>
         )}
       </div>
-     
     </div>
   );
 };

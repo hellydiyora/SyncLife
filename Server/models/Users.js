@@ -23,6 +23,22 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
+    nickname:{
+        type:String,
+        default: "",
+    },
+    bio:{
+        type:String,
+        default: "",
+    },
+    phoneNumber:{
+        type:String,
+        default: "",
+    },
+    favoriteQuote:{
+        type:String,
+        default: "",
+    },
 });
 
 const User = mongoose.model('User' , userSchema);

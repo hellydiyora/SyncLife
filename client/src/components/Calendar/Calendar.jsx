@@ -9,18 +9,8 @@ const Calendar = ({ onDateClick, selectedDate }) => {
   const [currMonth, setCurrMonth] = useState(currDate.getMonth());
 
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
   ];
 
   const handlePrevNext = (change) => {
@@ -28,80 +18,90 @@ const Calendar = ({ onDateClick, selectedDate }) => {
     let newDate;
 
     if (newMonth < 0 || newMonth > 11) {
-      newDate = new Date(currYear, newMonth, new Date().getDate());
+      newDate = new Date(currYear, newMonth, 1);
       setCurrYear(newDate.getFullYear());
       setCurrMonth(newDate.getMonth());
     } else {
-      newDate = new Date(currYear, newMonth);
+      newDate = new Date(currYear, newMonth, 1);
       setCurrMonth(newMonth);
     }
   };
 
   const firstDayOfMonth = new Date(currYear, currMonth, 1).getDay();
   const lastDateOfMonth = new Date(currYear, currMonth + 1, 0).getDate();
-  const lastDayOfMonth = new Date(
-    currYear,
-    currMonth,
-    lastDateOfMonth
-  ).getDay();
+  const lastDayOfMonth = new Date(currYear, currMonth, lastDateOfMonth).getDay();
   const lastDateOfLastMonth = new Date(currYear, currMonth, 0).getDate();
 
+  const isToday = (day) => {
+    const now = new Date();
+    return day === now.getDate() && currMonth === now.getMonth() && currYear === now.getFullYear();
+  };
+
+  const isSelected = (day) => {
+    return selectedDate && selectedDate.getDate() === day && selectedDate.getMonth() === currMonth && selectedDate.getFullYear() === currYear;
+  };
+
   return (
-    <div className="w-[250px] signup:w-[320px] bg-white rounded-md shadow-md flex flex-col p-3">
-      <header className="grid grid-cols-2 p-2 items-center gap-20">
-        <p className="text-[20px] signup:text-[25px] sm:text-3xl font-semibold">{`${months[currMonth]} ${currYear}`}</p>
-        <div className="flex text-gray-600 h-9 w-9 cursor-pointer items-center justify-center text-center gap-4 ">
-          <span
+    <div className="w-full max-w-xs bg-white rounded-2xl border border-[#736E67]/[0.08] shadow-sm flex flex-col p-5 font-sans">
+      <header className="flex items-center justify-between mb-5">
+        <p className="font-serif text-lg font-semibold text-[#2D2A26]">
+          {`${months[currMonth]} ${currYear}`}
+        </p>
+        <div className="flex items-center gap-1">
+          <button
             onClick={() => handlePrevNext(-1)}
-            className="hover:bg-gray-100 rounded-full p-2"
+            className="p-1.5 rounded-full text-[#736E67] hover:text-[#2D2A26] hover:bg-[#736E67]/[0.05] transition-colors"
           >
-            <KeyboardArrowLeftIcon />
-          </span>
-          <span
+            <KeyboardArrowLeftIcon fontSize="small" />
+          </button>
+          <button
             onClick={() => handlePrevNext(1)}
-            className="hover:bg-gray-100 rounded-full p-2"
+            className="p-1.5 rounded-full text-[#736E67] hover:text-[#2D2A26] hover:bg-[#736E67]/[0.05] transition-colors"
           >
-            <KeyboardArrowRightIcon />
-          </span>
+            <KeyboardArrowRightIcon fontSize="small" />
+          </button>
         </div>
       </header>
-      <div className="flex flex-col  ">
-      <ul className="weeks grid grid-cols-7 gap-5 list-none text-center justify-items-center pb-5">
-          <li>Sun</li>
-          <li>Mon</li>
-          <li>Tue</li>
-          <li>Wed</li>
-          <li>Thu</li>
-          <li>Fri</li>
-          <li>Sat</li>
-        </ul>
-        <ul className="days grid grid-cols-7  gap-5 list-none text-center">
-          {[...Array(firstDayOfMonth)].map((_, index) => (
-            <li key={`inactive-${index}`} className="text-gray-400">
+
+      <div className="grid grid-cols-7 gap-1 mb-2">
+        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
+          <div key={day} className="text-center text-[10px] font-semibold text-[#736E67] tracking-wider uppercase py-1">
+            {day}
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-7 gap-1">
+        {[...Array(firstDayOfMonth)].map((_, index) => (
+          <div key={`inactive-${index}`} className="text-center text-sm text-[#C4BFB8] py-2">
             {lastDateOfLastMonth - firstDayOfMonth + index + 1}
-            </li>
-          ))}
+          </div>
+        ))}
 
-          {[...Array(lastDateOfMonth)].map((_, index) => (
-            <li
+        {[...Array(lastDateOfMonth)].map((_, index) => {
+          const day = index + 1;
+          return (
+            <div
               key={`active-${index}`}
-              className={
-                selectedDate  && selectedDate.getDate() === index + 1 ? "underline font-extrabold" : "active "
-              }
-              onClick={() =>
-                onDateClick(new Date(currYear, currMonth, index + 1))
-              }
+              className={`text-center text-sm py-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                isSelected(day)
+                  ? "bg-[#7E8F7A] text-white font-semibold shadow-sm"
+                  : isToday(day)
+                  ? "text-[#7E8F7A] font-bold"
+                  : "text-[#2D2A26] hover:bg-[#7E8F7A]/[0.08]"
+              }`}
+              onClick={() => onDateClick(new Date(currYear, currMonth, day))}
             >
-              <p>{index + 1}</p>
-            </li>
-          ))}
+              {day}
+            </div>
+          );
+        })}
 
-          {[...Array(6 - lastDayOfMonth)].map((_, index) => (
-            <li key={`inactive-next-${index}`} className="inactive ">
-              {index + 1}
-            </li>
-          ))}
-        </ul>
+        {[...Array(6 - lastDayOfMonth)].map((_, index) => (
+          <div key={`inactive-next-${index}`} className="text-center text-sm text-[#C4BFB8] py-2">
+            {index + 1}
+          </div>
+        ))}
       </div>
     </div>
   );

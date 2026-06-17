@@ -7,6 +7,7 @@ import Habit from "./components/Habit/Habit";
 import Gratitude from "./components/Gratitude/Gratitude";
 import Mood from "./components/Mood/Mood";
 import UserProfile from "./components/UserProfile/UserProfile";
+import AIAssistant from "./components/AI/AIAssistant";
 import SignUp from "./authentication/SignUp";
 import LogIn from "./authentication/LogIn";
 
@@ -50,6 +51,10 @@ const RouteData = () => {
           <Route
             path="/user"
             element={checkUser ? <UserProfile /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/ai"
+            element={checkUser ? <AIAssistant /> : <Navigate to="/" />}
           />
           <Route
             path="/signup"

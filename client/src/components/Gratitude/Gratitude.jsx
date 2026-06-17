@@ -112,7 +112,7 @@ const Gratitude = () => {
     if (gratiDetailsVisible || confirmBoxVisible || confirmAddEntry) {
       document.documentElement.style.overflow = "hidden";
     } else {
-      document.documentElement.style.overflow = "scroll";
+      document.documentElement.style.overflow = "";
     }
   }, [gratiDetailsVisible, confirmBoxVisible, confirmAddEntry]);
 
@@ -158,7 +158,7 @@ const Gratitude = () => {
         return;
       }
       const existingEntry = gratitudes.filter((gratitude) =>
-        moment(gratitude.date).isSame(date, "day")
+        moment.utc(gratitude.date).format("YYYY-MM-DD") === date
       );
 
       if (existingEntry.length > 0) {
@@ -184,92 +184,111 @@ const Gratitude = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-[#FAF8F5] text-[#2D2A26] font-sans">
       <Navbar />
-      <div className="bg-gray-100">
-        <h1 className="mt-5 text-4xl signup:text-5xl font-mainTag text-slate-800">GratiMemo</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-2 h-full gap-10 justify-items-center">
-          <div className="pt-5 signup:p-10">
+
+      {/* Header */}
+      <div className="py-12 px-6 max-w-7xl mx-auto w-full text-center">
+        <p className="text-[#C38A72] text-xs font-semibold tracking-[0.3em] uppercase mb-2">Gratitude Log</p>
+        <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-[#2D2A26]">
+          Grati<span className="text-[#7E8F7A] italic font-normal">Memo</span>
+        </h1>
+      </div>
+
+      <div className="max-w-7xl mx-auto w-full px-6 md:px-12 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start flex-grow">
+        {/* Left Side: Calendar Log */}
+        <div className="lg:col-span-6 w-full flex justify-center pt-4">
+          <div className="flex flex-col items-center gap-6 w-full max-w-md">
+            <h3 className="font-serif text-xl font-semibold text-[#2D2A26] text-left w-full">
+              Your Gratitude Calendar
+            </h3>
             <GratiCalender
               onDateClick={handleDateClick}
               selectedDate={selectedDate}
             />
+            <p className="text-xs text-[#736E67] font-light leading-relaxed text-center">
+              Click on any highlighted date in the calendar to review or reflect on past happy memories.
+            </p>
           </div>
-          <div className="flex flex-col justify-center items-center pb-10">
-            <div className="cardBG  p-8 w-3/4 rounded-lg">
-              <span>
-                <h2 className="font-subTag font-bold text-2xl signup:text-3xl text-slate-700 mb-4">
-                  <p>Enter your HAPPY Moment</p>
-                </h2>
-              </span>
-              <form className="flex flex-col gap-4" onSubmit={handleAddSubmit}>
-                <label>
-                  <span className="text-base signup:text-lg font-semibold text-gray-900">
-                    Select date:
-                  </span>
+        </div>
 
-                  <input
-                    className="border-2 border-gray-200 w-full p-2 shadow-md shadow-slate-500 rounded-md  placeholder-slate-900"
-                    type="date"
-                    name="date"
-                    onChange={handleChange}
-                    value={formData.date}
-                  />
+        {/* Right Side: Add Entry Form */}
+        <div className="lg:col-span-6 w-full flex justify-center">
+          <div className="w-full max-w-md bg-white rounded-2xl border border-[#736E67]/[0.08] shadow-sm p-6 sm:p-8 text-left">
+            <h3 className="font-serif text-xl font-semibold text-[#2D2A26] mb-6">
+              Enter Your Happy Moment
+            </h3>
+            <form className="space-y-6" onSubmit={handleAddSubmit}>
+              <div className="flex flex-col">
+                <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1">
+                  Select Date
                 </label>
+                <input
+                  className="input-cozy text-[#736E67]"
+                  type="date"
+                  name="date"
+                  onChange={handleChange}
+                  value={formData.date}
+                />
                 {dataError && (
-                  <p className="text-red-500 text-sm">{dataError}</p>
+                  <p className="text-[#D66B6B] text-xs mt-1.5 font-light">{dataError}</p>
                 )}
-                <label>
-                  <span className="text-base signup:text-lg font-semibold text-gray-900">
-                    Enter your entry:
-                  </span>
-                  <input
-                    className="border-2 border-gray-200 w-full p-2 shadow-md shadow-slate-500 rounded-md  placeholder-slate-900"
-                    type="text"
-                    name="entry"
-                    placeholder="I am greatful for...."
-                    onChange={handleChange}
-                    value={formData.entry}
-                  />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1">
+                  What are you grateful for?
                 </label>
-                <label>
-                  <span className="text-base signup:text-lg font-semibold text-gray-900">
-                    Attach Image:
-                  </span>
-                  <input
-                    className="border-2 border-gray-200 bg-white w-full p-2 shadow-md shadow-slate-500 rounded-md  placeholder-slate-900"
-                    type="file"
-                    onChange={handleFileChange}
-                    ref={fileInputRef}
-                  />
+                <input
+                  className="input-cozy"
+                  type="text"
+                  name="entry"
+                  placeholder="I am grateful for..."
+                  onChange={handleChange}
+                  value={formData.entry}
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1.5">
+                  Attach an Image
                 </label>
-                <div>
-                  <button
-                    type="submit"
-                    className="bg-slate-600 mt-5 text-white shadow-md shadow-black hover:bg-stone-400  py-3 px-6 rounded-md transition duration-300 ease-in-out"
-                  >
-                    Save
-                  </button>
-                </div>
-              </form>
-            </div>
+                <input
+                  className="w-full text-xs text-[#736E67] font-light file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#7E8F7A]/10 file:text-[#7E8F7A] file:hover:bg-[#7E8F7A]/20 transition-all cursor-pointer"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  ref={fileInputRef}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="btn-cozy-primary w-full py-3 pt-2"
+              >
+                Save Moment
+              </button>
+            </form>
           </div>
-          {selectedDate && gratiDetailsVisible && (
-            <GratiDetails date={selectedDate} onClose={closeGratiDetails} />
-          )}
         </div>
       </div>
+
+      {/* Details modal drawer */}
+      {selectedDate && gratiDetailsVisible && (
+        <GratiDetails date={selectedDate} onClose={closeGratiDetails} />
+      )}
+
       <Footer />
+
       <ConfirmBox
         visible={confirmAddEntry}
-        message="Are you sure?"
+        message="Are you sure you want to add this gratitude entry?"
         onCancel={handleAddCancel}
         onConfirm={handleAddConfirm}
       />
       <ConfirmBox
         visible={confirmBoxVisible}
-        message=" An entry already exists for this date. Do you want to change the
-              existing entry?"
+        message="An entry already exists for this date. Do you want to overwrite it?"
         onCancel={handleConfirmCancel}
         onConfirm={handleConfirmChange}
       />

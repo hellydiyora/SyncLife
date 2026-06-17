@@ -6,27 +6,43 @@ import HabitProgress from "./HabitProgress";
 import MoodProgress from "./MoodProgress";
 
 const Progress = ({
+  activeProgress,
   onJournalProgressClick,
   onHabitProgressClick,
   onMoodProgressClick,
 }) => {
   return (
-    <div>
-      <ul className="grid signup:grid-cols-3 sm:text-lg userP:text-2xl md:text-xl gap-4">
-        <li className="bg-gray-300  rounded-md flex justify-center items-center p-5 cursor-pointer">
-          <span onClick={onJournalProgressClick} >
-            TaskMate
-          </span>{" "}
+    <div className="w-full max-w-lg mx-auto">
+      <ul className="flex items-center justify-center gap-4 bg-white p-1.5 rounded-full border border-[#736E67]/[0.08] shadow-sm font-sans text-xs sm:text-sm font-medium tracking-wide">
+        <li
+          onClick={onJournalProgressClick}
+          className={`flex-1 text-center py-2.5 px-4 rounded-full cursor-pointer transition-all duration-300 ${
+            activeProgress === "journal"
+              ? "bg-[#7E8F7A] text-white shadow-sm"
+              : "text-[#736E67] hover:text-[#2D2A26] hover:bg-[#FAF8F5]"
+          }`}
+        >
+          TaskMate
         </li>
-        <li className="bg-gray-300 rounded-md flex justify-center items-center p-5 cursor-pointer">
-          <span onClick={onHabitProgressClick} >
-            GoalMinder
-          </span>{" "}
+        <li
+          onClick={onHabitProgressClick}
+          className={`flex-1 text-center py-2.5 px-4 rounded-full cursor-pointer transition-all duration-300 ${
+            activeProgress === "habit"
+              ? "bg-[#7E8F7A] text-white shadow-sm"
+              : "text-[#736E67] hover:text-[#2D2A26] hover:bg-[#FAF8F5]"
+          }`}
+        >
+          GoalMinder
         </li>
-        <li className="bg-gray-300 rounded-md flex justify-center items-center p-5 cursor-pointer">
-          <span onClick={onMoodProgressClick} >
-            EmoSense
-          </span>
+        <li
+          onClick={onMoodProgressClick}
+          className={`flex-1 text-center py-2.5 px-4 rounded-full cursor-pointer transition-all duration-300 ${
+            activeProgress === "mood"
+              ? "bg-[#7E8F7A] text-white shadow-sm"
+              : "text-[#736E67] hover:text-[#2D2A26] hover:bg-[#FAF8F5]"
+          }`}
+        >
+          EmoSense
         </li>
       </ul>
     </div>
@@ -41,25 +57,32 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col min-h-screen bg-[#FAF8F5] text-[#2D2A26]">
       <Navbar />
-      <div className="min-h-screen bg-gray-100 ">
-        <h1 className="font-mainTag text-5xl pt-5"> Progress</h1>
-        <div className="grid">
-          <div className="p-5 flex justify-center items-center gap-5">
-            <Progress
-              onJournalProgressClick={() => handleProgressClick("journal")}
-              onHabitProgressClick={() => handleProgressClick("habit")}
-              
-              onMoodProgressClick={() => handleProgressClick("mood")}
-            />
-          </div>
-          <div >
-            {activeProgress === "journal" && <JournalProgress />}
-            {activeProgress === "habit" && <HabitProgress />}
+      <div className="flex-grow py-12 px-6 max-w-7xl mx-auto w-full">
+        {/* Editorial Heading */}
+        <div className="text-center mb-10">
+          <p className="text-[#C38A72] text-xs font-semibold tracking-[0.3em] uppercase mb-2">Metrics</p>
+          <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-[#2D2A26]">
+            Your Progress <span className="text-[#7E8F7A] italic font-normal">Journal</span>
+          </h1>
+        </div>
 
-            {activeProgress === "mood" && <MoodProgress />}
-          </div>
+        {/* Dynamic Tabs */}
+        <div className="mb-10">
+          <Progress
+            activeProgress={activeProgress}
+            onJournalProgressClick={() => handleProgressClick("journal")}
+            onHabitProgressClick={() => handleProgressClick("habit")}
+            onMoodProgressClick={() => handleProgressClick("mood")}
+          />
+        </div>
+
+        {/* Dashboard Progress Data cards */}
+        <div className="animate-scaleIn bg-white rounded-2xl border border-[#736E67]/[0.08] p-6 sm:p-10 shadow-sm">
+          {activeProgress === "journal" && <JournalProgress />}
+          {activeProgress === "habit" && <HabitProgress />}
+          {activeProgress === "mood" && <MoodProgress />}
         </div>
       </div>
       <Footer />

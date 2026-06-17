@@ -31,11 +31,11 @@ const GratiCalender = ({ onDateClick, selectedDate }) => {
     let newDate;
 
     if (newMonth < 0 || newMonth > 11) {
-      newDate = new Date(currYear, newMonth, new Date().getDate());
+      newDate = new Date(currYear, newMonth, 1);
       setCurrYear(newDate.getFullYear());
       setCurrMonth(newDate.getMonth());
     } else {
-      newDate = new Date(currYear, newMonth);
+      newDate = new Date(currYear, newMonth, 1);
       setCurrMonth(newMonth);
     }
   };
@@ -50,22 +50,22 @@ const GratiCalender = ({ onDateClick, selectedDate }) => {
   const lastDateOfLastMonth = new Date(currYear, currMonth, 0).getDate();
   const today = new Date();
   return (
-    <div className="w-[250px] signup:w-[320px] min-[400px]:w-[420px] sm:w-[420px]  bg-white rounded-md shadow-md flex flex-col p-3">
-      <header className="grid grid-cols-2 gap-10 justify-between py-7 px-14 items-center">
-        <p className="text-[27px] sm:text-4xl font-semibold font-subTag ">{`${months[currMonth]} ${currYear}`}</p>
-        <div className="flex text-gray-600 h-9 w-9 cursor-pointer items-center justify-center text-center gap-3 ">
-          <span
+    <div className="w-full max-w-md bg-white rounded-2xl border border-[#736E67]/[0.08] shadow-sm flex flex-col p-5 font-sans">
+      <header className="flex items-center justify-between mb-5">
+        <p className="font-serif text-lg font-semibold text-[#2D2A26]">{`${months[currMonth]} ${currYear}`}</p>
+        <div className="flex items-center gap-1">
+          <button
             onClick={() => handlePrevNext(-1)}
-            className="hover:bg-gray-100 rounded-full p-2"
+            className="p-1.5 rounded-full text-[#736E67] hover:text-[#2D2A26] hover:bg-[#736E67]/[0.05] transition-colors"
           >
-            <KeyboardArrowLeftIcon />
-          </span>
-          <span
+            <KeyboardArrowLeftIcon fontSize="small" />
+          </button>
+          <button
             onClick={() => handlePrevNext(1)}
-            className="hover:bg-gray-100 rounded-full p-2"
+            className="p-1.5 rounded-full text-[#736E67] hover:text-[#2D2A26] hover:bg-[#736E67]/[0.05] transition-colors"
           >
-            <KeyboardArrowRightIcon />
-          </span>
+            <KeyboardArrowRightIcon fontSize="small" />
+          </button>
         </div>
       </header>
       <div className="cal ">
@@ -85,75 +85,61 @@ const GratiCalender = ({ onDateClick, selectedDate }) => {
             </li>
           ))}
 
-          {[...Array(lastDateOfMonth)].map((_, index) => (
-            <li
-              key={`activee-${index}`}
-              className={
-                selectedDate && selectedDate.getDate() === index + 1
-                  ? " font-bold font-subTag underline  text-white"
-                  : "activee min-h-14 font-extralight font-subTag"
-              }
-              onClick={() =>
-                onDateClick(new Date(currYear, currMonth, index + 1))
-              }
-            >
-              <div className="grid ">
-                <div className={selectedDate && selectedDate.getDate() === index + 1 ? "w-[40px] h-10 border-2 rounded-xl border-black items-center relative": "w-[40px] items-center relative" }>
-                  {gratitudes &&
-                    gratitudes.map((data, idx) => {
-                      const gratitudeDate = new Date(data.date);
-                      const gratitudeDay = gratitudeDate.getDate();
-                      const gratitudeMonth = gratitudeDate.getMonth();
+          {[...Array(lastDateOfMonth)].map((_, index) => {
+            const gratitudeEntry = gratitudes && gratitudes.find((data) => {
+              const gratitudeDate = new Date(data.date);
+              return (
+                gratitudeDate.getUTCDate() === index + 1 &&
+                gratitudeDate.getUTCMonth() === currMonth &&
+                gratitudeDate.getUTCFullYear() === currYear
+              );
+            });
+            const isImageFile = (filename) => {
+              if (!filename) return false;
+              const ext = filename.split(".").pop().toLowerCase();
+              return ["jpg", "jpeg", "png", "gif", "webp", "svg", "heic", "heif"].includes(ext);
+            };
+            const hasImage =
+              gratitudeEntry &&
+              gratitudeEntry.image &&
+              gratitudeEntry.image !== "blank.jpg" &&
+              isImageFile(gratitudeEntry.image);
+            const isSelected = selectedDate && selectedDate.getDate() === index + 1;
 
-                      if (
-                        gratitudeDay === index + 1 &&
-                        gratitudeMonth === currMonth &&
-                        gratitudeDate.getFullYear() === currYear
-                      ) {
-                        return (
-                          <div key={data._id}>
-                            <img
-                              src={`${VITE_SERVER_IMAGE_URL}/${data.image}`}
-                              alt="entry"
-                              className="h-10 w-full opacity-50 rounded-xl"
-                            />
-                            <p
-                              key={`gratitude-${index}-${idx}`}
-                              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-black"
-                            >
-                              {index + 1}
-                            </p>
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <p
-                            key={`default-${index}-${idx}`}
-                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-black"
-                          >
-                            {index + 1}
-                          </p>
-                        );
-                      }
-                    })}
-                  {!gratitudes.some((data) => {
-                    const gratitudeDate = new Date(data.date);
-                    const gratitudeDay = gratitudeDate.getDate();
-                    const gratitudeMonth = gratitudeDate.getMonth();
-                    return (
-                      gratitudeDay === index + 1 &&
-                      gratitudeMonth === currMonth &&
-                      gratitudeDate.getFullYear() === currYear
-                    );
-                  }) && (
-                    <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-black">
-                      {index + 1}
-                    </p>
-                  )}
+            return (
+              <li
+                key={`activee-${index}`}
+                className={`activee min-h-14 font-extralight font-subTag ${
+                  isSelected ? "font-bold text-white" : ""
+                }`}
+                onClick={() =>
+                  onDateClick(new Date(currYear, currMonth, index + 1))
+                }
+              >
+                <div className="grid">
+                  <div
+                    className={`w-[40px] h-10 flex items-center justify-center relative rounded-xl transition-all duration-300 ${
+                      isSelected ? "border-2 border-[#2D2A26] shadow-sm" : ""
+                    }`}
+                  >
+                    {hasImage ? (
+                      <div className="relative w-10 h-10 flex items-center justify-center rounded-xl overflow-hidden shadow-sm">
+                        <img
+                          src={`${VITE_SERVER_IMAGE_URL}/images/${gratitudeEntry.image}`}
+                          alt="entry"
+                          className="absolute inset-0 w-full h-full object-cover opacity-95 hover:opacity-100 transition-opacity duration-300"
+                        />
+                      </div>
+                    ) : (
+                      <span className="text-[13px] font-light text-[#2D2A26] select-none">
+                        {index + 1}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
 
           {[...Array(6 - lastDayOfMonth)].map((_, index) => (
             <li key={`inactive-next-${index}`} className="inactive font-subTag">

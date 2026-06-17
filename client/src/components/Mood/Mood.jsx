@@ -48,7 +48,6 @@ const Mood = () => {
   }, [dispatch]);
 
   const handleDateClick = (date) => {
-    
     setSelectedDate(date);
     fetchAndSetMoods();
   };
@@ -57,15 +56,18 @@ const Mood = () => {
     setShowPage(false);
     fetchAndSetMoods();
     setSelectedDate(new Date());
-    setSearchDate();
+    setSearchDate("");
   };
 
   const handleSearchDateChange = (e) => {
     setSearchDate(e.target.value);
   };
+
   const handleSearch = (e) => {
     e.preventDefault();
-    setShowPage(true);
+    if (searchDate) {
+      setShowPage(true);
+    }
   };
 
   const handleDeleteConfrim = () => {
@@ -81,170 +83,180 @@ const Mood = () => {
     setDeleteDate(date);
     setConfirmDelete(true);
   };
+
   const renderFilteredMoods = () => {
+    const targetDateStr = moment(selectedDate).format("YYYY-MM-DD");
     const filteredMoods = moods.filter((mood) =>
-      moment(mood.date).isSame(moment(selectedDate), "day")
+      moment.utc(mood.date).format("YYYY-MM-DD") === targetDateStr
     );
 
     if (filteredMoods.length === 0) {
-      return <p className="text-lg text-gray-400">No entry available</p>;
+      return (
+        <div className="py-12 text-center bg-white rounded-2xl border border-[#736E67]/[0.08] shadow-sm w-full p-6">
+          <svg className="w-10 h-10 mx-auto text-[#736E67]/30 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+          <p className="text-[#736E67]/60 text-sm font-light">No emotional log found for this day.</p>
+        </div>
+      );
     }
 
     return (
-      <div>
+      <div className="w-full space-y-4">
         {filteredMoods.map((filteredMood) => (
-          <div key={filteredMood._id} className="flex justify-center">
-            <li className="bgHabit m-2 rounded-md p-4 shadow-sm shadow-black list-none max-w-80 ">
-              <span className="text-3xl font-subTag text-gray-700 underline">
-                {moment(filteredMood.date).format("DD-MM-YYYY")}
-              </span>
-              <div className="mt-2 grid gap-2">
-                <div
-                  key={filteredMood._id}
-                  className="flex flex-col justify-center items-center gap-2"
-                >
-                  <span className="text-2xl font-serif text-gray-700">
-                    {filteredMood.feeling.value}
-                  </span>
-                  <img
-                    src={filteredMood.feeling.image}
-                    alt={filteredMood.feeling.value}
-                    className="h-12 w-12"
-                  />
-                </div>
+          <div
+            key={filteredMood._id}
+            className="w-full bg-white rounded-2xl border border-[#736E67]/[0.08] p-6 sm:p-8 shadow-sm flex flex-col text-left space-y-6 animate-scaleIn"
+          >
+            {/* Date and Emotion Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-[#736E67]/[0.06]">
+              <div>
+                <span className="text-[#C38A72] text-[10px] font-semibold tracking-wider uppercase">
+                  Daily Check-in
+                </span>
+                <h4 className="font-serif text-xl font-semibold text-[#2D2A26] mt-0.5">
+                  {moment.utc(filteredMood.date).format("MMMM DD, YYYY")}
+                </h4>
+              </div>
 
-                <p className="text-sm">
-                  Activities that made you feel this way
-                </p>
-                {filteredMood.activity[0].weather.length === 0 &&
+              {/* Feel badge */}
+              <div className="flex items-center gap-2.5 bg-[#7E8F7A]/10 py-1.5 px-4 rounded-full border border-[#7E8F7A]/10">
+                <img
+                  src={filteredMood.feeling.image}
+                  alt={filteredMood.feeling.value}
+                  className="h-5 w-5 object-contain"
+                />
+                <span className="text-[#7E8F7A] text-xs font-semibold tracking-wide">
+                  {filteredMood.feeling.value}
+                </span>
+              </div>
+            </div>
+
+            {/* Activities grid */}
+            <div>
+              <p className="text-xs font-semibold tracking-wider text-[#736E67] uppercase mb-4">
+                What influenced your emotions:
+              </p>
+
+              {filteredMood.activity[0].weather.length === 0 &&
                 filteredMood.activity[0].social.length === 0 &&
                 filteredMood.activity[0].location.length === 0 &&
                 filteredMood.activity[0].food.length === 0 &&
                 filteredMood.activity[0].health.length === 0 &&
                 filteredMood.activity[0].hobby.length === 0 ? (
-                  <p className="text-gray-500">No activity selected</p>
-                ) : (
-                  <div className="grid grid-cols-3 gap-2">
-                    {!filteredMood.activity[0].weather.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].weather.map((emotion, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col justify-center items-center gap-2"
-                        >
-                          <span className="text-2xl font-subTag text-gray-700">
-                            {emotion.value}
-                          </span>
-                          <img
-                            src={emotion.image}
-                            alt={emotion.value}
-                            className="h-12 w-12"
-                          />
-                        </div>
-                      ))}
-                    {!filteredMood.activity[0].social.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].social.map((emotion, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col justify-center items-center gap-2"
-                        >
-                          <span className="text-2xl font-subTag text-gray-700">
-                            {emotion.value}
-                          </span>
-                          <img
-                            src={emotion.image}
-                            alt={emotion.value}
-                            className="h-12 w-12"
-                          />
-                        </div>
-                      ))}
-                    {!filteredMood.activity[0].location.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].location.map(
-                        (emotion, index) => (
-                          <div
-                            key={index}
-                            className="flex flex-col justify-center items-center gap-2"
-                          >
-                            <span className="text-2xl font-subTag text-gray-700">
-                              {emotion.value}
-                            </span>
-                            <img
-                              src={emotion.image}
-                              alt={emotion.value}
-                              className="h-12 w-12"
-                            />
-                          </div>
-                        )
-                      )}
-                    {!filteredMood.activity[0].food.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].food.map((emotion, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col justify-center items-center gap-2"
-                        >
-                          <span className="text-2xl font-subTag text-gray-700">
-                            {emotion.value}
-                          </span>
-                          <img
-                            src={emotion.image}
-                            alt={emotion.value}
-                            className="h-12 w-12"
-                          />
-                        </div>
-                      ))}
-                    {!filteredMood.activity[0].health.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].health.map((emotion, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col justify-center items-center gap-2"
-                        >
-                          <span className="text-2xl font-subTag text-gray-700">
-                            {emotion.value}
-                          </span>
-                          <img
-                            src={emotion.image}
-                            alt={emotion.value}
-                            className="h-12 w-12"
-                          />
-                        </div>
-                      ))}
-                    {!filteredMood.activity[0].hobby.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].hobby.map((emotion, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col justify-center items-center gap-2"
-                        >
-                          <span className="text-2xl font-subTag text-gray-700">
-                            {emotion.value}
-                          </span>
-                          <img
-                            src={emotion.image}
-                            alt={emotion.value}
-                            className="h-12 w-12"
-                          />
-                        </div>
-                      ))}
-                  </div>
-                )}
-              </div>
-            </li>
+                <p className="text-[#736E67]/60 text-sm font-light">No activities or categories logged.</p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {/* Weather */}
+                  {!filteredMood.activity[0].weather.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].weather.map((emotion, index) => (
+                      <div
+                        key={`weather-${index}`}
+                        className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
+                      >
+                        <img
+                          src={emotion.image}
+                          alt={emotion.value}
+                          className="h-8 w-8 object-contain"
+                        />
+                        <span className="text-xs font-medium text-[#2D2A26]">{emotion.value}</span>
+                      </div>
+                    ))}
+
+                  {/* Social */}
+                  {!filteredMood.activity[0].social.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].social.map((emotion, index) => (
+                      <div
+                        key={`social-${index}`}
+                        className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
+                      >
+                        <img
+                          src={emotion.image}
+                          alt={emotion.value}
+                          className="h-8 w-8 object-contain"
+                        />
+                        <span className="text-xs font-medium text-[#2D2A26]">{emotion.value}</span>
+                      </div>
+                    ))}
+
+                  {/* Location */}
+                  {!filteredMood.activity[0].location.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].location.map((emotion, index) => (
+                      <div
+                        key={`location-${index}`}
+                        className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
+                      >
+                        <img
+                          src={emotion.image}
+                          alt={emotion.value}
+                          className="h-8 w-8 object-contain"
+                        />
+                        <span className="text-xs font-medium text-[#2D2A26]">{emotion.value}</span>
+                      </div>
+                    ))}
+
+                  {/* Food */}
+                  {!filteredMood.activity[0].food.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].food.map((emotion, index) => (
+                      <div
+                        key={`food-${index}`}
+                        className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
+                      >
+                        <img
+                          src={emotion.image}
+                          alt={emotion.value}
+                          className="h-8 w-8 object-contain"
+                        />
+                        <span className="text-xs font-medium text-[#2D2A26]">{emotion.value}</span>
+                      </div>
+                    ))}
+
+                  {/* Health */}
+                  {!filteredMood.activity[0].health.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].health.map((emotion, index) => (
+                      <div
+                        key={`health-${index}`}
+                        className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
+                      >
+                        <img
+                          src={emotion.image}
+                          alt={emotion.value}
+                          className="h-8 w-8 object-contain"
+                        />
+                        <span className="text-xs font-medium text-[#2D2A26]">{emotion.value}</span>
+                      </div>
+                    ))}
+
+                  {/* Hobby */}
+                  {!filteredMood.activity[0].hobby.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].hobby.map((emotion, index) => (
+                      <div
+                        key={`hobby-${index}`}
+                        className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
+                      >
+                        <img
+                          src={emotion.image}
+                          alt={emotion.value}
+                          className="h-8 w-8 object-contain"
+                        />
+                        <span className="text-xs font-medium text-[#2D2A26]">{emotion.value}</span>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -256,8 +268,7 @@ const Mood = () => {
 
     if (user) {
       try {
-        date = moment(deleteDate).format("YYYY-MM-DD");
-
+        date = moment.utc(deleteDate).format("YYYY-MM-DD");
         await dispatch(deleteEntry({ date, userToken: user.token }));
         fetchAndSetMoods();
       } catch (error) {
@@ -270,78 +281,108 @@ const Mood = () => {
     if (confirmDelete) {
       document.documentElement.style.overflow = "hidden";
     } else {
-      document.documentElement.style.overflow = "scroll";
+      document.documentElement.style.overflow = "";
     }
   }, [confirmDelete]);
 
   return (
-    <div className="bg-gray-100 ">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#2D2A26] flex flex-col font-sans">
       <Navbar />
-      <div className="min-h-screen bg-gray-100">
-        {showPage ? (
-          <div>
-            <ActivityPage onClose={closePage} searchDate={searchDate} />
+
+      {/* Dynamic Show Mode */}
+      {showPage ? (
+        <div className="flex-grow">
+          <ActivityPage onClose={closePage} searchDate={searchDate} />
+        </div>
+      ) : (
+        <div className="flex-grow">
+          {/* Title Banner */}
+          <div className="py-12 px-6 max-w-7xl mx-auto w-full text-center">
+            <p className="text-[#C38A72] text-xs font-semibold tracking-[0.3em] uppercase mb-2">Reflections</p>
+            <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-[#2D2A26]">
+              Emo<span className="text-[#7E8F7A] italic font-normal">Sense</span>
+            </h1>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2">
-            <div className="p-10 flex flex-col gap-3">
-              <h1 className="text-5xl font-mainTag mb-5">Emo sense</h1>
-              <p className="text-3xl font-subTag mb-2">
-                How are you Feeling Today?
-              </p>
-              {/* <p className="text-2xl">Let's track your mood</p> */}
 
-              <form
-                className="flex flex-col xl:flex-row justify-center items-center gap-3"
-                onSubmit={handleSearch}
-              >
-                <p className="text-2xl font-serif">Enter entry for :</p>
-                <div>
-                  <input
-                    type="date"
-                    name="searchDate"
-                    value={searchDate}
-                    onChange={handleSearchDateChange}
-                    className="p-2 border-2 border-gray-200 shadow-md shadow-slate-400 rounded-md mb-2 mr-2 placeholder-slate-900"
-                  />
-                  <button
-                    className=" bg-white border-2 border-gray-200 text-black shadow-md shadow-slate-500 px-4 py-2 rounded-md hover:border-gray-500 transition duration-300 ease-in-out "
-                    type="submit"
-                  >
-                    Enter
-                  </button>
-                </div>
-              </form>
+          <div className="max-w-7xl mx-auto w-full px-6 md:px-12 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            {/* Left Column: Form entry + Filtered logs */}
+            <div className="lg:col-span-7 flex flex-col gap-8 items-start w-full text-left">
+              <div className="w-full bg-white rounded-2xl border border-[#736E67]/[0.08] shadow-sm p-6 sm:p-8">
+                <h3 className="font-serif text-xl font-semibold text-[#2D2A26] mb-2">
+                  How are you feeling today?
+                </h3>
+                <p className="text-[#736E67] text-xs font-light mb-6">
+                  Select a date below to log or track your daily mindfulness check-ins.
+                </p>
 
-              {selectedDate && moods && renderFilteredMoods()}
+                <form
+                  className="space-y-4"
+                  onSubmit={handleSearch}
+                >
+                  <div className="flex flex-col">
+                    <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1">
+                      Check-in Date
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <input
+                        type="date"
+                        name="searchDate"
+                        value={searchDate}
+                        onChange={handleSearchDateChange}
+                        className="input-cozy text-[#736E67] flex-grow"
+                      />
+                      <button
+                        className="btn-cozy-primary py-3 px-10 text-xs font-semibold rounded-full tracking-wider uppercase shadow-sm transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto"
+                        type="submit"
+                      >
+                        Enter
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
 
-              {moods.filter((mood) =>
-                moment(mood.date).isSame(moment(selectedDate), "day")
-              ).length > 0 && (
-                <div>
-                  <button
-                    // className="mt-5 bg-slate-600 bottom-0 text-white px-4 py-2 rounded-full hover:bg-slate-700 transition duration-300 ease-in-out focus:outline-none focus:ring focus:border-slate-900"
-                    className="bg-gray-300 border-2 border-white py-1 px-2 rounded-md shadow-sm shadow-black"
-                    onClick={() => handleDeleteClick(selectedDate)}
-                  >
-                    Delete entry
-                  </button>
-                </div>
-              )}
+              {/* Show check in data logs */}
+              <div className="w-full space-y-4">
+                <h3 className="font-serif text-xl font-semibold text-[#2D2A26] border-b border-[#736E67]/[0.06] pb-3">
+                  Log Entry for {moment(selectedDate).format("MMMM DD, YYYY")}
+                </h3>
+                {selectedDate && moods && renderFilteredMoods()}
+
+                {moods.filter((mood) =>
+                  moment.utc(mood.date).format("YYYY-MM-DD") === moment(selectedDate).format("YYYY-MM-DD")
+                ).length > 0 && (
+                    <button
+                      className="py-2.5 px-6 border border-[#D66B6B]/40 hover:bg-[#D66B6B]/[0.04] text-[#D66B6B] text-xs font-medium rounded-full transition duration-300 w-full sm:w-auto"
+                      onClick={() => handleDeleteClick(selectedDate)}
+                    >
+                      Delete Entry
+                    </button>
+                  )}
+              </div>
             </div>
-            <div className="flex pb-10 sm:p-14 items-start justify-center">
-              <Calendar
-                onDateClick={handleDateClick}
-                selectedDate={selectedDate}
-              />
+
+            {/* Right Column: Custom Calendar picker */}
+            <div className="lg:col-span-5 w-full flex justify-center pt-2">
+              <div className="flex flex-col items-center gap-6 w-full max-w-sm">
+                <h3 className="font-serif text-xl font-semibold text-[#2D2A26] text-left w-full">
+                  Mood Calendar
+                </h3>
+                <Calendar
+                  onDateClick={handleDateClick}
+                  selectedDate={selectedDate}
+                />
+              </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
       <Footer />
+
       <ConfirmBox
         visible={confirmDelete}
-        message="Do you want to delete?"
+        message="Are you sure you want to delete this emotional check-in log?"
         onCancel={handleDeleteCancel}
         onConfirm={handleDeleteConfrim}
       />

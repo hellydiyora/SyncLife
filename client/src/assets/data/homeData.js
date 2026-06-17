@@ -28,6 +28,12 @@ const data = [
     image: moodT,
     link: "/mood",
   },
+  {
+    title: "AI Insights",
+    description: "Your personal AI coach for smarter productivity.",
+    image: journal,
+    link: "/ai",
+  },
 ];
 
 export default data;

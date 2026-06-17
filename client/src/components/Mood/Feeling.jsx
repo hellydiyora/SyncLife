@@ -7,34 +7,53 @@ const Feeling = ({
   handleOptionClick,
 }) => {
   return (
-    <div>
-      <p className="text-center font-semibold text-2xl m-2">
-        How are you feeling today?
-      </p>
-      <div onClick={handleToggle}>
-        {selectedOption && (
-          <div className="flex flex-col justify-center items-center">
+    <div className="space-y-4 text-left w-full">
+      <div onClick={handleToggle} className="cursor-pointer">
+        {selectedOption ? (
+          <div className="flex items-center gap-3 bg-[#7E8F7A]/10 border border-[#7E8F7A]/20 p-4 rounded-xl max-w-xs animate-scaleIn">
             <img
               src={selectedOption.image}
-              className="w-12 h-12"
+              className="w-10 h-10 object-contain"
               alt={selectedOption.value}
             />
-            <p>{selectedOption.value}</p>
+            <div>
+              <p className="text-xs text-[#736E67] font-semibold tracking-wider uppercase">Currently Selected</p>
+              <p className="font-serif text-lg font-semibold text-[#2D2A26]">{selectedOption.value}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="py-2.5 px-4 bg-[#C38A72]/10 border border-[#C38A72]/15 text-[#C38A72] text-xs font-semibold rounded-xl max-w-xs text-center">
+            No mood selected yet
           </div>
         )}
       </div>
 
-      <ul className="grid grid-cols-3 signup:grid-cols-5 bg-slate-300 rounded-3xl items-center justify-center shadow-md shadow-slate-300">
-        {feelings.map((item) => (
-          <li
-            key={item.value}
-            onClick={() => handleOptionClick(item)}
-            className="p-2 rounded-3xl flex flex-col justify-center items-center hover:shadow-2xl hover:shadow-black"
-          >
-            <img src={item.image} alt={item.value} className="w-12 h-12" />
-            <p>{item.value}</p>
-          </li>
-        ))}
+      <ul className="grid grid-cols-2 sm:grid-cols-5 bg-white border border-[#736E67]/[0.08] rounded-2xl items-center justify-center p-3.5 shadow-sm gap-2 w-full">
+        {feelings.map((item) => {
+          const isSelected = selectedOption?.value === item.value;
+          return (
+            <li
+              key={item.value}
+              onClick={() => handleOptionClick(item)}
+              className={`p-4 rounded-xl flex flex-col justify-center items-center gap-2 cursor-pointer transition-all duration-300 group ${
+                isSelected
+                  ? "bg-[#7E8F7A] text-white shadow-sm"
+                  : "hover:bg-[#7E8F7A]/5"
+              }`}
+            >
+              <img
+                src={item.image}
+                alt={item.value}
+                className="w-11 h-11 object-contain group-hover:scale-110 transition-transform duration-300"
+              />
+              <span className={`text-xs font-medium ${
+                isSelected ? "text-white" : "text-[#736E67] group-hover:text-[#2D2A26]"
+              }`}>
+                {item.value}
+              </span>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

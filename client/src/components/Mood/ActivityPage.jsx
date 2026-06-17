@@ -22,28 +22,39 @@ import Feeling from "./Feeling";
 import ConfirmBox from "../ConfirmBox";
 
 const SelectionList = ({ items, onSelect }) => (
-  <>
-    <ul className="grid grid-cols-3 signup:grid-cols-5 bg-slate-300 rounded-xl items-center justify-center shadow-md shadow-slate-300">
-      {items.map((item) => (
-        <li
-          key={item.value}
-          onClick={() => onSelect(item)}
-          className="p-2 rounded-xl flex flex-col justify-center items-center hover:shadow-2xl hover:shadow-black"
-        >
-          <img src={item.image} alt={item.value} className="w-12 h-12" />
-          <p className="text-sm">{item.value}</p>
-        </li>
-      ))}
-    </ul>
-  </>
+  <ul className="grid grid-cols-3 signup:grid-cols-5 bg-white border border-[#736E67]/[0.08] rounded-2xl items-center justify-center p-3 shadow-sm gap-2">
+    {items.map((item) => (
+      <li
+        key={item.value}
+        onClick={() => onSelect(item)}
+        className="p-3.5 rounded-xl flex flex-col justify-center items-center hover:bg-[#7E8F7A]/5 hover:scale-105 transition-all duration-300 cursor-pointer text-center group"
+      >
+        <img
+          src={item.image}
+          alt={item.value}
+          className="w-10 h-10 object-contain group-hover:scale-110 transition-transform duration-300"
+        />
+        <p className="text-[11px] font-medium text-[#736E67] group-hover:text-[#2D2A26] mt-1.5 text-center leading-tight max-w-[75px]">
+          {item.value}
+        </p>
+      </li>
+    ))}
+  </ul>
 );
 
 const SelectedActivities = ({ selectedActivities }) => (
-  <div className="flex flex-wrap justify-center items-center">
+  <div className="flex flex-wrap justify-center items-center gap-2">
     {selectedActivities.map((activity) => (
-      <div key={activity.value} className="m-1 px-2">
-        <img src={activity.image} className="w-12 h-12" alt={activity.value} />
-        <p>{activity.value}</p>
+      <div
+        key={activity.value}
+        className="m-1 p-2 bg-[#7E8F7A]/10 border border-[#7E8F7A]/15 rounded-xl flex items-center gap-2 px-3 animate-scaleIn"
+      >
+        <img
+          src={activity.image}
+          className="w-5 h-5 object-contain"
+          alt={activity.value}
+        />
+        <span className="text-xs font-semibold text-[#7E8F7A]">{activity.value}</span>
       </div>
     ))}
   </div>
@@ -61,8 +72,8 @@ const ActivityPage = ({ onClose, searchDate }) => {
   const [selectedHobby, setSelectedHobby] = useState([]);
   const [isOpenFeeling, setIsOpenFeeling] = useState(false);
   const [confirmSave, setConfirmSave] = useState(false);
-  const [msg, setMsg] = useState();
-  const [error, setError] = useState();
+  const [msg, setMsg] = useState("");
+  const [error, setError] = useState("");
 
   const user = useSelector(selectUser);
 
@@ -116,7 +127,7 @@ const ActivityPage = ({ onClose, searchDate }) => {
 
     if (isAlreadySelected) {
       setSelectedLocation((prevLocations) =>
-        prevLocations.filter((activity) => activity.value != locationD.value)
+        prevLocations.filter((activity) => activity.value !== locationD.value)
       );
     } else {
       setSelectedLocation((prevLocations) => [...prevLocations, locationD]);
@@ -167,7 +178,7 @@ const ActivityPage = ({ onClose, searchDate }) => {
 
   const handleDataEnter = () => {
     onClose();
-    const newDate = moment(searchDate).format("YYYY-MM-DD");
+    const newDate = typeof searchDate === 'string' ? searchDate : moment(searchDate).format("YYYY-MM-DD");
 
     if (selectedOption && selectedOption.value && user) {
       dispatch(
@@ -242,7 +253,7 @@ const ActivityPage = ({ onClose, searchDate }) => {
 
   const handleSaveClick = () => {
     const hasPreviousEntry = moods.some((mood) =>
-      moment(mood.date).isSame(moment(searchDate), "day")
+      moment.utc(mood.date).isSame(moment.utc(searchDate), "day")
     );
     if (!selectedOption) {
       setError("Select your mood");
@@ -256,174 +267,119 @@ const ActivityPage = ({ onClose, searchDate }) => {
     setConfirmSave(true);
   };
 
-  // useEffect(() => {
-  //   if (confirmSave) {
-  //     document.documentElement.style.overflow = "hidden";
-  //   } else {
-  //     document.documentElement.style.overflow = "";
-  //   }
-  // }, [confirmSave]);
-
   const renderFilteredMoods = () => {
     const filteredMoods = moods.filter((mood) =>
-      moment(mood.date).isSame(moment(searchDate), "day")
+      moment.utc(mood.date).isSame(moment.utc(searchDate), "day")
     );
 
     return (
-      <div>
+      <div className="w-full">
         {filteredMoods.map((filteredMood) => (
-          <div key={filteredMood._id} className="flex justify-center">
-            <li className="bgHabit m-2 rounded-md p-4 shadow-sm shadow-black list-none max-w-80">
-              <span className="text-xl sm:text-xl md:text-lg lg:text-xl font-mono text-gray-700 underline">
-                Previous Entry
-              </span>
-              <div className="mt-2 grid gap-2">
-                <div
-                  key={filteredMood._id}
-                  className="flex flex-col justify-center items-center gap-2"
-                >
-                  <span className="text-2xl font-serif text-gray-700">
-                    {filteredMood.feeling.value}
-                  </span>
-                  <img
-                    src={filteredMood.feeling.image}
-                    alt={filteredMood.feeling.value}
-                    className="h-12 w-12"
-                  />
-                </div>
-
-                {filteredMood.activity[0].weather.length === 0 &&
-                filteredMood.activity[0].social.length === 0 &&
-                filteredMood.activity[0].location.length === 0 &&
-                filteredMood.activity[0].food.length === 0 &&
-                filteredMood.activity[0].health.length === 0 &&
-                filteredMood.activity[0].hobby.length === 0 ? (
-                  <p className="text-gray-500">No activity selected</p>
-                ) : (
-                  <div
-                    className="grid grid-cols-2 md:grid-cols-1 activityP:grid-cols-2 gap-2 max-h-20 pr-5 overflow-y-auto"
-                    id="style-1"
-                  >
-                    {!filteredMood.activity[0].weather.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].weather.map((emotion, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col justify-center items-center gap-2"
-                        >
-                          <span className="text-xl font-serif text-gray-700">
-                            {emotion.value}
-                          </span>
-                          <img
-                            src={emotion.image}
-                            alt={emotion.value}
-                            className="h-12 w-12"
-                          />
-                        </div>
-                      ))}
-                    {!filteredMood.activity[0].social.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].social.map((emotion, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col justify-center items-center gap-2"
-                        >
-                          <span className="text-xl font-serif text-gray-700">
-                            {emotion.value}
-                          </span>
-                          <img
-                            src={emotion.image}
-                            alt={emotion.value}
-                            className="h-12 w-12"
-                          />
-                        </div>
-                      ))}
-                    {!filteredMood.activity[0].location.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].location.map(
-                        (emotion, index) => (
-                          <div
-                            key={index}
-                            className="flex flex-col justify-center items-center gap-2"
-                          >
-                            <span className="text-xl font-serif text-gray-700">
-                              {emotion.value}
-                            </span>
-                            <img
-                              src={emotion.image}
-                              alt={emotion.value}
-                              className="h-12 w-12"
-                            />
-                          </div>
-                        )
-                      )}
-                    {!filteredMood.activity[0].food.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].food.map((emotion, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col justify-center items-center gap-2"
-                        >
-                          <span className="text-xl font-serif text-gray-700">
-                            {emotion.value}
-                          </span>
-                          <img
-                            src={emotion.image}
-                            alt={emotion.value}
-                            className="h-12 w-12"
-                          />
-                        </div>
-                      ))}
-                    {!filteredMood.activity[0].health.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].health.map((emotion, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col justify-center items-center gap-2"
-                        >
-                          <span className="text-xl font-serif text-gray-700">
-                            {emotion.value}
-                          </span>
-                          <img
-                            src={emotion.image}
-                            alt={emotion.value}
-                            className="h-12 w-12"
-                          />
-                        </div>
-                      ))}
-                    {!filteredMood.activity[0].hobby.some(
-                      (emotion) =>
-                        emotion.value === null || emotion.image === null
-                    ) &&
-                      filteredMood.activity[0].hobby.map((emotion, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col justify-center items-center gap-2"
-                        >
-                          <span className="text-xl font-serif text-gray-700">
-                            {emotion.value}
-                          </span>
-                          <img
-                            src={emotion.image}
-                            alt={emotion.value}
-                            className="h-12 w-12"
-                          />
-                        </div>
-                      ))}
-                  </div>
-                )}
+          <div
+            key={filteredMood._id}
+            className="bg-white rounded-2xl border border-[#736E67]/[0.08] p-6 shadow-sm text-left flex flex-col space-y-4 max-w-sm w-full"
+          >
+            <span className="text-[#C38A72] text-[10px] font-semibold tracking-wider uppercase">
+              Previous Log
+            </span>
+            <div className="flex items-center gap-3 pb-3 border-b border-[#736E67]/[0.06]">
+              <div className="w-10 h-10 bg-[#7E8F7A]/10 rounded-full flex items-center justify-center">
+                <img
+                  src={filteredMood.feeling.image}
+                  alt={filteredMood.feeling.value}
+                  className="h-6 w-6 object-contain"
+                />
               </div>
-            </li>
+              <div>
+                <p className="font-serif text-base font-semibold text-[#2D2A26]">
+                  {filteredMood.feeling.value}
+                </p>
+                <p className="text-[10px] text-[#736E67] font-light">Logged Mood</p>
+              </div>
+            </div>
+
+            {/* List weather/social */}
+            <div className="space-y-3">
+              <p className="text-[10px] font-semibold text-[#736E67] uppercase tracking-wider">
+                Influencing activities:
+              </p>
+              {filteredMood.activity[0].weather.length === 0 &&
+              filteredMood.activity[0].social.length === 0 &&
+              filteredMood.activity[0].location.length === 0 &&
+              filteredMood.activity[0].food.length === 0 &&
+              filteredMood.activity[0].health.length === 0 &&
+              filteredMood.activity[0].hobby.length === 0 ? (
+                <p className="text-xs text-[#736E67]/60 font-light">No logged activities.</p>
+              ) : (
+                <div className="max-h-24 overflow-y-auto pr-2 space-y-1.5" id="style-1">
+                  {/* Weather */}
+                  {!filteredMood.activity[0].weather.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].weather.map((emotion, index) => (
+                      <div key={`w-${index}`} className="flex items-center gap-2 text-xs">
+                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <span className="text-[#2D2A26] font-light">{emotion.value}</span>
+                      </div>
+                    ))}
+
+                  {/* Social */}
+                  {!filteredMood.activity[0].social.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].social.map((emotion, index) => (
+                      <div key={`s-${index}`} className="flex items-center gap-2 text-xs">
+                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <span className="text-[#2D2A26] font-light">{emotion.value}</span>
+                      </div>
+                    ))}
+
+                  {/* Location */}
+                  {!filteredMood.activity[0].location.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].location.map((emotion, index) => (
+                      <div key={`l-${index}`} className="flex items-center gap-2 text-xs">
+                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <span className="text-[#2D2A26] font-light">{emotion.value}</span>
+                      </div>
+                    ))}
+
+                  {/* Food */}
+                  {!filteredMood.activity[0].food.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].food.map((emotion, index) => (
+                      <div key={`f-${index}`} className="flex items-center gap-2 text-xs">
+                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <span className="text-[#2D2A26] font-light">{emotion.value}</span>
+                      </div>
+                    ))}
+
+                  {/* Health */}
+                  {!filteredMood.activity[0].health.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].health.map((emotion, index) => (
+                      <div key={`h-${index}`} className="flex items-center gap-2 text-xs">
+                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <span className="text-[#2D2A26] font-light">{emotion.value}</span>
+                      </div>
+                    ))}
+
+                  {/* Hobby */}
+                  {!filteredMood.activity[0].hobby.some(
+                    (emotion) => emotion.value === null || emotion.image === null
+                  ) &&
+                    filteredMood.activity[0].hobby.map((emotion, index) => (
+                      <div key={`hb-${index}`} className="flex items-center gap-2 text-xs">
+                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <span className="text-[#2D2A26] font-light">{emotion.value}</span>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -431,141 +387,138 @@ const ActivityPage = ({ onClose, searchDate }) => {
   };
 
   return (
-    <div className="h-full grid gap-20">
-      <form
-        className="flex flex-col items-center gap-4"
-        onSubmit={handleSubmit}
-      >
+    <div className="max-w-7xl mx-auto w-full px-6 md:px-12 pb-24 animate-fadeIn">
+      {/* Return Header */}
+      <div className="flex items-center gap-4 py-8 mb-8 border-b border-[#736E67]/[0.06]">
+        <button
+          onClick={onClose}
+          className="text-[#736E67] hover:text-[#2D2A26] transition-colors p-1.5 rounded-full hover:bg-[#736E67]/[0.05]"
+          title="Back"
+        >
+          <ArrowCircleLeftIcon fontSize="large" />
+        </button>
         <div>
-          <div>
-            <div className="flex justify-start w-full items-center gap-2 p-5">
-              <div className="w-1/12 cursor-pointer" onClick={onClose}>
-                <ArrowCircleLeftIcon />
+          <span className="text-[#C38A72] text-[10px] font-semibold tracking-wider uppercase">
+            Mindfulness Check-in
+          </span>
+          <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-[#2D2A26] mt-0.5">
+            Log for {moment.utc(searchDate).format("MMMM DD, YYYY")}
+          </h2>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-12">
+        {/* Feeling selector block */}
+        <div className="w-full bg-white rounded-2xl border border-[#736E67]/[0.08] shadow-sm p-6 sm:p-8">
+          <h3 className="font-serif text-xl font-semibold text-[#2D2A26] mb-2 text-left">
+            1. Select your general mood
+          </h3>
+          <p className="text-[#736E67] text-xs font-light mb-6 text-left">
+            Choose the emotion that best matches how your day went.
+          </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start justify-items-center lg:justify-items-stretch">
+            <div className={`${
+              moods.filter((m) => moment.utc(m.date).isSame(moment.utc(searchDate), "day")).length > 0
+                ? "lg:col-span-8 w-full"
+                : "lg:col-span-12 w-full"
+            }`}>
+              <Feeling
+                selectedOption={selectedOption}
+                isOpenFeeling={isOpenFeeling}
+                handleToggle={handleToggleFeeling}
+                handleOptionClick={handleOptionClickFeeling}
+              />
+            </div>
+            
+            {moods.filter((m) => moment.utc(m.date).isSame(moment.utc(searchDate), "day")).length > 0 && (
+              <div className="lg:col-span-4 w-full flex justify-center">
+                {renderFilteredMoods()}
               </div>
-              <p className="w-11/12 text-center font-serif underline  text-lg signup:text-2xl md:text-3xl ">
-                Fill entry for {moment(searchDate).format("DD-MM-YYYY")}
-              </p>
-            </div>
-            <div >
-              {moods.filter((mood) =>
-                moment(mood.date).isSame(moment(searchDate), "day")
-              ).length > 0 ? (
-                <>
-                  {" "}
-                  <div className="grid grid-rows-[1fr,1.1fr] gap-2 md:grid-rows-none md:grid-cols-4 justify-items-center">
-                  <div className="md:col-span-3 w-[250px] signup:w-[350px] activityP:w-[450px] ">
-                    {" "}
-                    <Feeling
-                      selectedOption={selectedOption}
-                      isOpenFeeling={isOpenFeeling}
-                      handleToggle={handleToggleFeeling}
-                      handleOptionClick={handleOptionClickFeeling}
-                    />
-                  </div>
-                  {searchDate && moods && renderFilteredMoods()}
-                  </div>
-                </>
-              ) : (
-                <div className="grid md:grid-rows-none md:grid-cols-4 justify-items-center">
-                <div className="md:col-span-4 w-[250px] signup:w-[350px] activityP:w-[450px]">
-                  {" "}
-                  <Feeling
-                    selectedOption={selectedOption}
-                    isOpenFeeling={isOpenFeeling}
-                    handleToggle={handleToggleFeeling}
-                    handleOptionClick={handleOptionClickFeeling}
-                  />
-                </div>
-                </div>
-              )}
+            )}
+          </div>
+        </div>
+
+        {/* Selected activities summary badge panel */}
+        {((selectedActivity && selectedActivity.length > 0) ||
+          (selectedSocialActivity && selectedSocialActivity.length > 0) ||
+          (selectedLocation && selectedLocation.length > 0) ||
+          (selectedFood && selectedFood.length > 0) ||
+          (selectedHealth && selectedHealth.length > 0) ||
+          (selectedHobby && selectedHobby.length > 0)) && (
+          <div className="w-full bg-[#7E8F7A]/5 border border-[#7E8F7A]/15 rounded-2xl p-6 text-left animate-scaleIn">
+            <p className="text-xs font-semibold tracking-wider text-[#7E8F7A] uppercase mb-3">
+              Selected Factors:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {selectedActivity.length > 0 && <SelectedActivities selectedActivities={selectedActivity} />}
+              {selectedSocialActivity.length > 0 && <SelectedActivities selectedActivities={selectedSocialActivity} />}
+              {selectedLocation.length > 0 && <SelectedActivities selectedActivities={selectedLocation} />}
+              {selectedFood.length > 0 && <SelectedActivities selectedActivities={selectedFood} />}
+              {selectedHealth.length > 0 && <SelectedActivities selectedActivities={selectedHealth} />}
+              {selectedHobby.length > 0 && <SelectedActivities selectedActivities={selectedHobby} />}
             </div>
           </div>
-        </div>
-        <label className="text-center font-semibold text-2xl m-2">
-          What activity caused this feeling?
-        </label>
-        
-        <div className="max-w-[250px] px-5 flex flex-wrap signup:max-w-3xl bg-stone-200 rounded-3xl shadow-md shadow-slate-300">
+        )}
+
+        {/* Dynamic Category Blocks */}
+        <div className="space-y-6 text-left">
           <div>
-            {selectedActivity && selectedActivity.length > 0 && (
-              <SelectedActivities selectedActivities={selectedActivity} />
-            )}
+            <h3 className="font-serif text-xl font-semibold text-[#2D2A26] mb-1">
+              2. Add influencing factors
+            </h3>
+            <p className="text-[#736E67] text-xs font-light mb-8">
+              Select any activities, environments, or states that contributed to your mood.
+            </p>
           </div>
-          <div>
-            {selectedSocialActivity && selectedSocialActivity.length > 0 && (
-              <SelectedActivities selectedActivities={selectedSocialActivity} />
-            )}
-          </div>
-          <div>
-            {selectedLocation && selectedLocation.length > 0 && (
-              <SelectedActivities selectedActivities={selectedLocation} />
-            )}
-          </div>
-          <div>
-            {selectedFood && selectedFood.length > 0 && (
-              <SelectedActivities selectedActivities={selectedFood} />
-            )}
-          </div>
-          <div>
-            {selectedHealth && selectedHealth.length > 0 && (
-              <SelectedActivities selectedActivities={selectedHealth} />
-            )}
-          </div>
-          <div>
-            {selectedHobby && selectedHobby.length > 0 && (
-              <SelectedActivities selectedActivities={selectedHobby} />
-            )}
-          </div>
-        </div>
-        <div className="w-full gap-5 grid justify-items-center xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 ">
-          <div className="w-[250px] signup:w-[350px] activityP:w-[400px]">
-            <p className="text-center font-mono text-xl">Weather</p>
-            <SelectionList items={weather} onSelect={handleActivityClick} />
-          </div>
-          <div className="w-[250px] signup:w-[350px] activityP:w-[400px]">
-            <p className="text-center font-mono text-xl">Social</p>
-            <SelectionList items={social} onSelect={handleSocialClick} />
-          </div>
-          <div className="w-[250px] signup:w-[350px] activityP:w-[400px]">
-            <p className="text-center font-mono text-xl">Location</p>
-            <SelectionList
-              items={location}
-              onSelect={handleLocationClick}
-              selectedOptions={selectedLocation}
-            />
-          </div>
-          <div className="w-[250px] signup:w-[350px] activityP:w-[400px]">
-            <p className="text-center font-mono text-xl">Food</p>
-            <SelectionList
-              items={food}
-              onSelect={handleFoodClick}
-              selectedOptions={selectedFood}
-            />
-          </div>
-          <div className="w-[250px] signup:w-[350px] activityP:w-[400px]">
-            <p className="text-center font-mono text-xl">Health</p>
-            <SelectionList
-              items={health}
-              onSelect={handleHealthClick}
-              selectedOptions={selectedHealth}
-            />
-          </div>
-          <div className="w-[250px] signup:w-[350px] activityP:w-[400px]">
-            <p className="text-center font-mono text-xl">Hobby</p>
-            <SelectionList
-              items={hobbies}
-              onSelect={handleHobbyClick}
-              selectedOptions={selectedHobby}
-            />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Weather */}
+            <div className="space-y-3">
+              <span className="text-[#C38A72] text-[10px] font-semibold tracking-widest uppercase">Weather</span>
+              <SelectionList items={weather} onSelect={handleActivityClick} />
+            </div>
+
+            {/* Social */}
+            <div className="space-y-3">
+              <span className="text-[#C38A72] text-[10px] font-semibold tracking-widest uppercase">Social</span>
+              <SelectionList items={social} onSelect={handleSocialClick} />
+            </div>
+
+            {/* Location */}
+            <div className="space-y-3">
+              <span className="text-[#C38A72] text-[10px] font-semibold tracking-widest uppercase">Location</span>
+              <SelectionList items={location} onSelect={handleLocationClick} />
+            </div>
+
+            {/* Food */}
+            <div className="space-y-3">
+              <span className="text-[#C38A72] text-[10px] font-semibold tracking-widest uppercase">Food</span>
+              <SelectionList items={food} onSelect={handleFoodClick} />
+            </div>
+
+            {/* Health */}
+            <div className="space-y-3">
+              <span className="text-[#C38A72] text-[10px] font-semibold tracking-widest uppercase">Health</span>
+              <SelectionList items={health} onSelect={handleHealthClick} />
+            </div>
+
+            {/* Hobby */}
+            <div className="space-y-3">
+              <span className="text-[#C38A72] text-[10px] font-semibold tracking-widest uppercase">Hobby</span>
+              <SelectionList items={hobbies} onSelect={handleHobbyClick} />
+            </div>
           </div>
         </div>
-        <div>
-          {error && <p className="text-red-500 mb-2">{error}</p>}
+
+        {/* Submit block */}
+        <div className="pt-6 border-t border-[#736E67]/[0.06]">
+          {error && <p className="text-[#D66B6B] text-sm font-light mb-4 text-center">{error}</p>}
           <button
-            className=" mt-2 mb-10 bg-slate-700 text-white shadow-lg shadow-slate-400 dark:shadow-slate-5 py-2 px-4 rounded-3xl "
+            className="btn-cozy-primary py-3.5 px-12 text-sm shadow-md"
             type="submit"
           >
-            Save
+            Save Mood Entry
           </button>
         </div>
       </form>

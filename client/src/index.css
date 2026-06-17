@@ -1,13 +1,383 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Madimi+One&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Truculenta:opsz,wght@12..72,100..900&display=swap');
-
-@import url("https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap");
-
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@400..700&family=Dosis:wght@200..800&family=Truculenta:opsz,wght@12..72,100..900&display=swap');
-
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ========================================
+   SyncLife Warm Editorial Design System
+   ======================================== */
+
+:root {
+  --color-bg-warm: #FAF8F5;
+  --color-bg-card: #FFFFFF;
+  --color-bg-oatmeal: #F4F1EC;
+  --color-text-dark: #2D2A26;
+  --color-text-muted: #736E67;
+  --color-sage: #7E8F7A;
+  --color-sage-light: #9BB096;
+  --color-terracotta: #C38A72;
+  --color-terracotta-light: #D4A08B;
+  --color-error: #D66B6B;
+}
+
+/* ========================================
+   Keyframe Animations
+   ======================================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+
+.animate-fadeIn {
+  animation: fadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* Cozy soft cards */
+.cozy-card {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(115, 110, 103, 0.08);
+  box-shadow: 0 4px 20px rgba(45, 42, 38, 0.02);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.cozy-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(45, 42, 38, 0.05);
+  border-color: rgba(126, 143, 122, 0.2);
+}
+
+/* Minimalist Warm Input Style */
+.input-cozy {
+  width: 100%;
+  padding: 12px 0;
+  font-size: 15px;
+  color: var(--color-text-dark);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid rgba(115, 110, 103, 0.18);
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.input-cozy::placeholder {
+  color: rgba(115, 110, 103, 0.45);
+  font-weight: 300;
+}
+
+.input-cozy:focus {
+  border-bottom-color: var(--color-sage);
+  box-shadow: 0 1px 0 0 var(--color-sage);
+}
+
+/* Pill Primary Button */
+.btn-cozy-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 36px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: #FFFFFF;
+  background: var(--color-sage);
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-cozy-primary:hover {
+  background: var(--color-sage-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(126, 143, 122, 0.25);
+}
+
+.btn-cozy-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Terracotta Variant */
+.btn-cozy-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 36px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: #FFFFFF;
+  background: var(--color-terracotta);
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-cozy-accent:hover {
+  background: var(--color-terracotta-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(195, 138, 114, 0.25);
+}
+
+/* Outline Button */
+.btn-cozy-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 36px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--color-text-dark);
+  background: transparent;
+  border: 1.5px solid rgba(115, 110, 103, 0.25);
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-cozy-outline:hover {
+  border-color: var(--color-text-dark);
+  background: rgba(115, 110, 103, 0.04);
+  transform: translateY(-1px);
+}
+
+/* Soft Overlays */
+.image-light-overlay {
+  position: relative;
+}
+
+.image-light-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(250, 248, 245, 0.15) 0%,
+    rgba(250, 248, 245, 0.3) 100%
+  );
+  pointer-events: none;
+}
+
+/* Smooth Scroll */
+html {
+  scroll-behavior: smooth;
+  background-color: var(--color-bg-warm);
+}
+
+::selection {
+  background: var(--color-sage-light);
+  color: white;
+}
+
+/* ========================================
+   Midnight Dark Theme Overrides
+   ======================================== */
+.dark {
+  --color-bg-warm: #151311;
+  --color-bg-card: #1E1C19;
+  --color-bg-oatmeal: #282522;
+  --color-text-dark: #FAF8F5;
+  --color-text-muted: #9E988E;
+  --color-sage: #93A68F;
+  --color-sage-light: #B4C6AF;
+  --color-terracotta: #DCA086;
+  --color-terracotta-light: #ECCAB9;
+}
+
+/* Ensure background transitions smoothly */
+html, body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Global Dark overrides for Tailwind hardcoded elements */
+.dark body {
+  background-color: var(--color-bg-warm);
+}
+
+.dark div.bg-\[\#FAF8F5\],
+.dark div.bg-\[\#FAF8F5\]\/80,
+.dark section.bg-\[\#FAF8F5\],
+.dark div.bg-gradient-to-b.from-\[\#FAF8F5\]\/40.via-\[\#FAF8F5\]\/75.to-\[\#FAF8F5\] {
+  background-color: var(--color-bg-warm) !important;
+}
+
+.dark div.bg-gradient-to-b.from-\[\#FAF8F5\]\/40.via-\[\#FAF8F5\]\/75.to-\[\#FAF8F5\] {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(21, 19, 17, 0.4) 0%,
+    rgba(21, 19, 17, 0.75) 75%,
+    var(--color-bg-warm) 100%
+  ) !important;
+}
+
+/* Soft oatmeal backgrounds */
+.dark .bg-\[\#F4F1EC\] {
+  background-color: var(--color-bg-oatmeal) !important;
+}
+
+/* Cozy Cards and inputs */
+.dark .bg-white {
+  background-color: var(--color-bg-card) !important;
+}
+
+.dark .text-\[\#2D2A26\] {
+  color: var(--color-text-dark) !important;
+}
+
+.dark .text-\[\#736E67\] {
+  color: var(--color-text-muted) !important;
+}
+
+.dark .text-\[\#736E67\]\/60 {
+  color: rgba(250, 248, 245, 0.45) !important;
+}
+
+.dark .text-\[\#736E67\]\/75 {
+  color: rgba(250, 248, 245, 0.6) !important;
+}
+
+.dark .border-\[\#736E67\]\/10,
+.dark .border-\[\#736E67\]\/\[0\.08\],
+.dark .border-\[\#736E67\]\/\[0\.06\],
+.dark .border-\[\#736E67\]\/\[0\.05\],
+.dark .border-\[\#736E67\]\/\[0\.04\] {
+  border-color: rgba(250, 248, 245, 0.08) !important;
+}
+
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-xl {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .cozy-card {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(250, 248, 245, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dark .cozy-card:hover {
+  border-color: rgba(147, 166, 143, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.dark .input-cozy {
+  color: var(--color-text-dark);
+  border-bottom-color: rgba(250, 248, 245, 0.18);
+}
+
+.dark .input-cozy:focus {
+  border-bottom-color: var(--color-sage);
+  box-shadow: 0 1px 0 0 var(--color-sage);
+}
+
+.dark .input-cozy::placeholder {
+  color: rgba(250, 248, 245, 0.35);
+}
+
+/* MUI Icon color override helpers in dark mode */
+.dark svg.text-\[\#736E67\]\/60 {
+  color: rgba(250, 248, 245, 0.4) !important;
+}
+
+.dark svg.text-\[\#736E67\]\/40 {
+  color: rgba(250, 248, 245, 0.3) !important;
+}
+
+.dark .bg-\[\#FAF8F5\]\/10 {
+  background-color: rgba(250, 248, 245, 0.05) !important;
+}
+
+.dark .bg-\[\#7E8F7A\]\/10 {
+  background-color: rgba(147, 166, 143, 0.15) !important;
+}
+
+.dark .bg-\[\#C38A72\]\/10 {
+  background-color: rgba(220, 160, 134, 0.15) !important;
+}
+
+.dark .file\:bg-\[\#7E8F7A\]\/10 {
+  background-color: rgba(147, 166, 143, 0.15) !important;
+}
+
+/* Fix specific calendar elements */
+.dark .react-calendar {
+  background-color: var(--color-bg-card) !important;
+  color: var(--color-text-dark) !important;
+  border-color: rgba(250, 248, 245, 0.08) !important;
+}
+
+.dark .react-calendar__tile:enabled:hover,
+.dark .react-calendar__tile:enabled:focus {
+  background-color: var(--color-bg-oatmeal) !important;
+}
+
+.dark .react-calendar__navigation button:enabled:hover,
+.dark .react-calendar__navigation button:enabled:focus {
+  background-color: var(--color-bg-oatmeal) !important;
+}

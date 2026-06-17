@@ -85,6 +85,18 @@ const authSlice = createSlice({
       .addCase(changePassword.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
   },
 });
@@ -98,7 +110,7 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem("user", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
-      throw new Error(error.response.data.error);
+      throw new Error(error.response?.data?.error || error.message);
     }
   }
 );
@@ -111,7 +123,7 @@ export const registerUser = createAsyncThunk(
       localStorage.setItem("user", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
-      throw new Error(error.response.data.error);
+      throw new Error(error.response?.data?.error || error.message);
     }
   }
 );
@@ -129,14 +141,31 @@ export const logoutUser = createAsyncThunk(
 
 export const fetchUser = createAsyncThunk(
   "auth/fetchUser",
-  async ({ email }) => {
+  async ({ email, userToken }) => {
     
     try {
-      const response = await axiosNew.get("/user", { params: { email } });
+      const response = await axiosNew.get("/user", {
+        params: { email },
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
       return response.data;
     } catch (error) {
       console.error("Error fetching data:", error);
       throw error;
+    }
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async ({ userData, userToken }) => {
+    try {
+      const response = await axiosNew.put("/user", userData, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || error.message);
     }
   }
 );
@@ -148,37 +177,36 @@ export const forgotUser = createAsyncThunk(
       const response = await axiosNew.post("/forgotPassword", { email});
       return response.data;
     } catch (error) {
-      throw new Error(error.response.data.error);
+      throw new Error(error.response?.data?.error || error.message);
     }
   }
 );
 
-export const checkOtp = createAsyncThunk("auth/checkOtp" , async({otp}) => {
+export const checkOtp = createAsyncThunk("auth/checkOtp" , async({email, otp}) => {
   try {
-   
-    const response = await axiosNew.post("/forgotPassword/otp", { otp});
+    const response = await axiosNew.post("/forgotPassword/otp", { email, otp});
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.error);
+    throw new Error(error.response?.data?.error || error.message);
   }
 });
 
 export const changePassword = createAsyncThunk(
   "auth/changePassword" , 
-  async ({ email, password}) => {
+  async ({ email, password, otp}) => {
     try {
-      const response = await axiosNew.post("/resetpassword", { email , password});
+      const response = await axiosNew.post("/resetpassword", { email , password, otp});
       localStorage.setItem("user", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
-      throw new Error(error.response.data.error);
+      throw new Error(error.response?.data?.error || error.message);
     }
   }
 );
 
 export const selectUserFromLocalStorage = createSelector(
   () => localStorage.getItem("user"),
-  (user) => JSON.parse(user) || {}
+  (user) => JSON.parse(user) || null
 );
 
 export const selectAuth = (state) => state.auth;

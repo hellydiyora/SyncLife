@@ -1,8 +1,8 @@
 const User = require("../models/Users");
+const Otp = require("../models/Otp");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 const nodemailer = require("nodemailer");
 const Mailgen = require("mailgen");
 const otpGenerator = require("otp-generator");
@@ -16,6 +16,63 @@ const createToken = (_id) => {
 };
 
 const signup = async (req, res) => {
+  try {
+    const { firstName, lastName, email, birthDate, password, otp } = req.body;
+
+    if (!firstName || !lastName || !email || !birthDate || !password || !otp) {
+      throw Error("All fields must be filled, including the verification OTP.");
+    }
+
+    if (!validator.isEmail(email)) {
+      throw Error("Email is not valid");
+    }
+
+    if (!validator.isStrongPassword(password)) {
+      throw Error("Password is not strong enough");
+    }
+
+    const currentDate = new Date();
+    const userBirthDate = new Date(birthDate);
+    const age = currentDate.getFullYear() - userBirthDate.getFullYear();
+    if (age < 12) {
+      throw Error("User must be at least 12 years old");
+    }
+    const exist = await User.findOne({ email });
+
+    if (exist) {
+      return res.status(400).json({ error: "This email is already in use." });
+    }
+
+    // Verify OTP code
+    const otpRecord = await Otp.findOne({ email });
+    if (!otpRecord || otpRecord.otp !== otp) {
+      return res.status(400).json({ error: "Invalid or expired verification code." });
+    }
+
+    // Delete verified OTP record
+    await Otp.deleteOne({ email });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.create({
+      firstName,
+      lastName,
+      birthDate,
+      email,
+      password: hashedPassword,
+    });
+
+    console.log(user)
+    const token = createToken(user._id);
+
+    res.status(200).json({ email, token });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const sendSignupOtp = async (req, res) => {
   try {
     const { firstName, lastName, email, birthDate, password } = req.body;
 
@@ -43,23 +100,72 @@ const signup = async (req, res) => {
       return res.status(400).json({ error: "This email is already in use." });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = await User.create({
-      firstName,
-      lastName,
-      birthDate,
-      email,
-      password: hashedPassword,
+    // Generate 6-digit OTP
+    const generatedOTP = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
     });
 
-    console.log(user)
-    const token = createToken(user._id);
+    // Save or update OTP in database
+    await Otp.findOneAndUpdate(
+      { email },
+      { otp: generatedOTP, createdAt: new Date() },
+      { upsert: true, new: true }
+    );
 
-    res.status(200).json({ email, token });
+    // Send email using nodemailer Gmail transporter
+    let config = {
+      service: "gmail",
+      auth: {
+        user: userEmail,
+        pass: userPassword,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    };
+
+    let transporter = nodemailer.createTransport(config);
+
+    const mailGenerator = new Mailgen({
+      theme: "default",
+      product: {
+        name: "SyncLife",
+        link: "http://localhost:5173/",
+      },
+    });
+
+    const response = {
+      body: {
+        name: firstName,
+        intro:
+          "Welcome to SyncLife! You are receiving this email to verify your email address for creating a new account. This is your OTP (one-time password). Do not share it with anyone else.",
+        outro: generatedOTP,
+      },
+    };
+
+    const mail = mailGenerator.generate(response);
+
+    const message = {
+      from: userEmail,
+      to: email,
+      subject: "Verify Your Email - SyncLife Registration",
+      html: mail,
+    };
+
+    transporter.sendMail(message, (error, info) => {
+      if (error) {
+        console.error("Error sending signup verification email:", error);
+        res.status(500).json({ error: "Error sending verification email" });
+      } else {
+        console.log("Email sent successfully to:", email, "| Message ID:", info.messageId, "| Response:", info.response);
+        res.status(200).json({ message: "Verification code sent to your email" });
+      }
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error in sendSignupOtp:", error);
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -92,10 +198,9 @@ const login = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const { email } = req.query;
-
   try {
-    const userData = await User.findOne({ email });
+    const user_id = req.user._id;
+    const userData = await User.findById(user_id).select("-password");
 
     if (!userData) {
       return res.status(404).json({ error: "User not found" });
@@ -128,7 +233,12 @@ const forgotUser = async (req, res) => {
       specialChars: false,
     });
 
-    req.app.locals.generatedOTP = generatedOTP;
+    // Save or update OTP in database
+    await Otp.findOneAndUpdate(
+      { email },
+      { otp: generatedOTP, createdAt: new Date() },
+      { upsert: true, new: true }
+    );
 
     let config = {
       service: "gmail",
@@ -175,6 +285,7 @@ const forgotUser = async (req, res) => {
         console.error("Error sending email:", error);
         res.status(500).json({ error: "Error sending email" });
       } else {
+        console.log("Password reset email sent successfully to:", email, "| Message ID:", info.messageId, "| Response:", info.response);
         res.status(201).json({
           email,
         });
@@ -186,12 +297,16 @@ const forgotUser = async (req, res) => {
   }
 };
 
-const checkOtp = (req, res) => {
+const checkOtp = async (req, res) => {
   try {
-    const generatedOTP = req.app.locals.generatedOTP;
-    const { otp } = req.body;
+    const { email, otp } = req.body;
 
-    if (otp === generatedOTP) {
+    if (!email || !otp) {
+      return res.status(400).json({ error: "Email and OTP are required" });
+    }
+
+    const otpRecord = await Otp.findOne({ email });
+    if (otpRecord && otpRecord.otp === otp) {
       console.log("otp verified");
       res.status(200).json({ message: "OTP verified successfully" });
     } else {
@@ -205,9 +320,9 @@ const checkOtp = (req, res) => {
 
 const resetUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, otp } = req.body;
 
-    if (!email || !password) {
+    if (!email || !password || !otp) {
       throw Error("All fields must be filled");
     }
 
@@ -221,12 +336,19 @@ const resetUser = async (req, res) => {
       throw Error("Email does not exist");
     }
 
+    // Verify OTP code
+    const otpRecord = await Otp.findOne({ email });
+    if (!otpRecord || otpRecord.otp !== otp) {
+      return res.status(400).json({ error: "Invalid or expired verification code." });
+    }
+
+    // Delete verified OTP record
+    await Otp.deleteOne({ email });
+
     const salt = await bcrypt.genSalt(10);
-    ``;
     const hashedPassword = await bcrypt.hash(password, salt);
     user.password = hashedPassword;
 
-    
     const token = createToken(user._id);
     await user.save();
     res
@@ -238,4 +360,26 @@ const resetUser = async (req, res) => {
   }
 };
 
-module.exports = { getUser, signup, login, forgotUser, resetUser, checkOtp };
+const updateUser = async (req, res) => {
+  const user_id = req.user._id;
+  const { firstName, lastName, nickname, birthDate, bio, phoneNumber, favoriteQuote } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      user_id,
+      { firstName, lastName, nickname, birthDate, bio, phoneNumber, favoriteQuote },
+      { new: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error updating user data:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { getUser, signup, login, forgotUser, resetUser, checkOtp, sendSignupOtp, updateUser };

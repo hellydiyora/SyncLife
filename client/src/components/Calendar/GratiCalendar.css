@@ -4,8 +4,8 @@
 }
 
 .cal.weeks li {
-  color: #333;
-  font-size: 1.3rem;
+  color: #736E67;
+  font-size: 1.1rem;
   font-weight: 500;
   cursor: default;
   padding-bottom: 10px;
@@ -21,24 +21,27 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #333;
-  font-size: 1.5rem;
+  color: #2D2A26;
+  font-size: 1.3rem;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.cal .days li:hover {
+  background-color: rgba(126, 143, 122, 0.08);
 }
 
 .days li.inactive {
-  color: #aaa;
+  color: #C4BFB8;
 }
 
-.activeeSelected
-{
-  
-  border-radius: 20%;
-  border: 3px solid black;
-  text-decoration: underline !important;
+.activeeSelected {
+  border-radius: 12px;
+  border: 2px solid #7E8F7A;
 }
 
 .activeeSelected:hover {
-  background-color: #807c7c;
+  background-color: rgba(126, 143, 122, 0.1);
 }
 
 .cal .days li p {
@@ -47,5 +50,6 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  color: #000;
+  color: #2D2A26;
+  font-size: 0.85rem;
 }

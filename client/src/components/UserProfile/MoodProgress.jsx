@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchMoodData, setMoodData } from "../../reducers/moodSlice";
 import { selectUser } from "../../reducers/authSlice";
 import { Bar } from "react-chartjs-2";
-import Select from "@mui/material/Select";
-import { MenuItem } from "@mui/material";
 import moment from "moment";
 import {
   Chart as ChartJS,
@@ -29,7 +27,7 @@ const MoodProgress = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const [view, setView] = useState("week");
-  
+
   const fetchAndSetMoods = async () => {
     try {
       if (user) {
@@ -48,19 +46,19 @@ const MoodProgress = () => {
   }, [dispatch]);
 
   const feelingColors = {
-    Excellent: "rgba(255, 99, 132, 0.5)",
-    Happy: "rgba(54, 162, 235, 0.5)",
-    Average: "rgba(255, 206, 86, 0.5)",
-    Sad: "rgba(75, 192, 192, 0.5)",
-    Terrible: "rgba(153, 102, 255, 0.5)",
+    Excellent: "rgba(126,143,122,0.6)",
+    Happy: "rgba(126,143,122,0.35)",
+    Average: "rgba(195,138,114,0.4)",
+    Sad: "rgba(115,110,103,0.35)",
+    Terrible: "rgba(214,107,107,0.4)",
   };
 
   const borderColors = {
-    Excellent: "rgba(255, 99, 132, 1)",
-    Happy: "rgba(54, 162, 235, 1)",
-    Average: "rgba(255, 206, 86, 1)",
-    Sad: "rgba(75, 192, 192, 1)",
-    Terrible: "rgba(153, 102, 255, 1)",
+    Excellent: "#7E8F7A",
+    Happy: "#7E8F7A",
+    Average: "#C38A72",
+    Sad: "#736E67",
+    Terrible: "#D66B6B",
   };
 
   const calculateFeelingCounts = (moods, startDate, endDate) => {
@@ -93,13 +91,13 @@ const MoodProgress = () => {
 
     const datasets = [
       {
-        label: "count",
+        label: "Entries",
         data: labels.map((label) => feelingCounts[label]),
         backgroundColor: labels.map((label) => feelingColors[label]),
         borderColor: labels.map((label) => borderColors[label]),
-        borderWidth: 1,
-        borderRadius: 13,
-        barThickness: 40,
+        borderWidth: 2,
+        borderRadius: 8,
+        barThickness: 32,
         minBarLength: 3,
       },
     ];
@@ -112,82 +110,69 @@ const MoodProgress = () => {
   const startOfMonth = moment(today).startOf("month").format("YYYY-MM-DD");
   const lastWeek = moment(today).subtract(7, "days").format("YYYY-MM-DD");
 
-  const yearlyFeelingCounts = calculateFeelingCounts(
-    moods,
-    "0000-01-01",
-    today
-  );
-  const monthlyFeelingCounts = calculateFeelingCounts(
-    moods,
-    startOfMonth,
-    today
-  );
+  const yearlyFeelingCounts = calculateFeelingCounts(moods, "0000-01-01", today);
+  const monthlyFeelingCounts = calculateFeelingCounts(moods, startOfMonth, today);
   const weeklyFeelingCounts = calculateFeelingCounts(moods, lastWeek, today);
 
   const yearlyData = updateData(yearlyFeelingCounts);
   const monthlyData = updateData(monthlyFeelingCounts);
   const weeklyData = updateData(weeklyFeelingCounts);
 
-  const yearlyOptions = {
+  const makeOptions = (title) => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: false,
-      },
+      legend: { display: false },
       title: {
         display: true,
         position: "bottom",
-        text: "Yearly Mood Progress",
+        text: title,
+        font: { family: "'Inter', sans-serif", size: 12, weight: "500" },
+        color: "#736E67",
+        padding: { top: 16 },
       },
     },
-  };
-
-  const weeklyOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { family: "'Inter', sans-serif", size: 11 }, color: "#736E67" },
       },
-      title: {
-        display: true,
-        position: "bottom",
-        text: "Weekly Mood Progress",
+      y: {
+        grid: { color: "rgba(115,110,103,0.06)" },
+        ticks: { font: { family: "'Inter', sans-serif", size: 11 }, color: "#736E67", stepSize: 1 },
       },
     },
+  });
+
+  const viewButtons = [
+    { key: "week", label: "Weekly" },
+    { key: "month", label: "Monthly" },
+    { key: "year", label: "All Time" },
+  ];
+
+  const getCurrentView = () => {
+    switch (view) {
+      case "week":
+        return { ...weeklyData, title: "Weekly Mood Distribution" };
+      case "month":
+        return { ...monthlyData, title: "Monthly Mood Distribution" };
+      case "year":
+        return { ...yearlyData, title: "All Time Mood Distribution" };
+      default:
+        return { ...weeklyData, title: "Weekly" };
+    }
   };
 
-  const monthlyOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      title: {
-        display: true,
-        position: "bottom",
-        text: "Monthly Mood Progress",
-      },
-    },
-  };
+  const currentView = getCurrentView();
 
-  const handleChange = (e) => {
-    setView(e.target.value);
-  };
-
-  /**activity */
-
-  /*good mood"*/
-  const data = moods.filter(
+  /**activity analysis */
+  const goodMoodData = moods.filter(
     (mood) =>
       mood.feeling.value === "Excellent" || mood.feeling.value === "Happy"
   );
 
   const activities = [];
-
-  data.forEach((mood) => {
+  goodMoodData.forEach((mood) => {
     if (mood.activity && mood.activity.length > 0) {
       mood.activity.forEach((activityCategory) => {
         Object.keys(activityCategory).forEach((category) => {
@@ -202,56 +187,32 @@ const MoodProgress = () => {
   });
 
   const activityCount = {};
-
   activities.forEach((activity) => {
-    if (activityCount[activity]) {
-      activityCount[activity]++;
-    } else {
-      activityCount[activity] = 1;
-    }
+    activityCount[activity] = (activityCount[activity] || 0) + 1;
   });
-
   const activityCountArray = Object.entries(activityCount)
-    .filter(([name, count]) => count > 5)
-    .map(([name, count]) => ({ name, count }));
+    .filter(([, count]) => count > 0)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8);
 
-  const labels = activityCountArray
-    ? activityCountArray.map((activity) => activity.name)
-    : [];
-  const activityExcellentdata = activityCountArray
-    ? activityCountArray.map((activity) => activity.count)
-    : [];
-
-  const datasets = [
-    {
-      label: "count",
-      data: activityExcellentdata,
-      backgroundColor: "rgba(85, 209, 25 , 0.6)",
-      borderColor: "rgba(85, 209, 25 , 1)",
-      borderWidth: 1,
-      borderRadius: 13,
-      barThickness: 36,
-      minBarLength: 3,
-    },
-  ];
-
-  const bardata = { labels, datasets };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
+  const goodBarData = {
+    labels: activityCountArray.map((a) => a.name),
+    datasets: [
+      {
+        label: "count",
+        data: activityCountArray.map((a) => a.count),
+        backgroundColor: "rgba(126,143,122,0.4)",
+        borderColor: "#7E8F7A",
+        borderWidth: 2,
+        borderRadius: 8,
+        barThickness: 28,
+        minBarLength: 3,
       },
-      title: {
-        display:false,
-      },
-    },
+    ],
   };
 
-  /*bad mood" */
-  const badData = moods.filter(
+  const badMoodEntries = moods.filter(
     (mood) =>
       mood.feeling.value === "Sad" ||
       mood.feeling.value === "Terrible" ||
@@ -259,8 +220,7 @@ const MoodProgress = () => {
   );
 
   const badActivities = [];
-
-  badData.forEach((mood) => {
+  badMoodEntries.forEach((mood) => {
     if (mood.activity && mood.activity.length > 0) {
       mood.activity.forEach((activityCategory) => {
         Object.keys(activityCategory).forEach((category) => {
@@ -275,146 +235,113 @@ const MoodProgress = () => {
   });
 
   const badActivityCount = {};
-
   badActivities.forEach((activity) => {
-    if (badActivityCount[activity]) {
-      badActivityCount[activity]++;
-    } else {
-      badActivityCount[activity] = 1;
-    }
+    badActivityCount[activity] = (badActivityCount[activity] || 0) + 1;
   });
-
-
   const badActivityCountArray = Object.entries(badActivityCount)
-    .filter(([name, count]) => count > 5)
-    .map(([name, count]) => ({ name, count }));
+    .filter(([, count]) => count > 0)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8);
 
-  const badActivityLabels = badActivityCountArray
-    ? badActivityCountArray.map((activity) => activity.name)
-    : [];
+  const badBarData = {
+    labels: badActivityCountArray.map((a) => a.name),
+    datasets: [
+      {
+        label: "count",
+        data: badActivityCountArray.map((a) => a.count),
+        backgroundColor: "rgba(214,107,107,0.3)",
+        borderColor: "#D66B6B",
+        borderWidth: 2,
+        borderRadius: 8,
+        barThickness: 28,
+        minBarLength: 3,
+      },
+    ],
+  };
 
-  const badActivityData = badActivityCountArray
-    ? badActivityCountArray.map((activity) => activity.count)
-    : [];
-
-  const badDatasets = [
-    {
-      label: "count",
-      data: badActivityData,
-      backgroundColor: "rgba(245, 100, 62, 0.6)",
-      borderColor: "rgba(245, 100, 62, 1)",
-      borderWidth: 1,
-      borderRadius: 13,
-      barThickness: 40,
-      minBarLength: 3,
+  const activityChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      title: { display: false },
     },
-  ];
-
-  const badMoodData = { labels: badActivityLabels, datasets: badDatasets };
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { family: "'Inter', sans-serif", size: 10 }, color: "#736E67" },
+      },
+      y: {
+        grid: { color: "rgba(115,110,103,0.06)" },
+        ticks: { font: { family: "'Inter', sans-serif", size: 10 }, color: "#736E67", stepSize: 1 },
+      },
+    },
+  };
 
   return (
-    <div className="flex flex-col gap-5 items-center">
-      <p className="text-5xl font-subTag underline">Mood Tracking</p>
-      <div>
-        {moods && moods.length > 0 ? (
+    <div className="space-y-10">
+      {/* Mood Tracking Section */}
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div>
-              <Select
-                onChange={handleChange}
-                style={{
-                  color: "black",
-                  backgroundColor: "inherit",
-                  height: "44px",
-                  fontSize: "20px",
-                }}
-                sx={{
-                  "& fieldset": { border: "none" },
-                  ":hover": { borderColor: "red", backgroundColor: "red" },
-                }}
-                defaultValue="week"
-              >
-                <MenuItem
-                  value="week"
-                  style={{
-                    color: "black",
-                    backgroundColor: " rgb(231 229 228)",
-                    height: "44px",
-                  }}
-                >
-                  Weekly tracking
-                </MenuItem>
-                <MenuItem
-                  value="month"
-                  style={{
-                    color: "black",
-                    backgroundColor: " rgb(231 229 228)",
-                    height: "44px",
-                  }}
-                >
-                  Monthly tracking
-                </MenuItem>
-                <MenuItem
-                  value="year"
-                  style={{
-                    color: "black",
-                    backgroundColor: " rgb(231 229 228)",
-                    height: "44px",
-                  }}
-                >
-                  All data
-                </MenuItem>
-              </Select>
-            </div>
-            {view === "year" ? (
-              <div   className="w-[270px] h-[200px]  signup:h-[230px] signup:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]">
-                <p>Total entry: {yearlyData.totalCount}</p>
-                <Bar data={yearlyData.data} options={yearlyOptions} />
-              </div>
-            ) : view === "month" ? (
-              <div   className="w-[270px] h-[200px]  signup:h-[230px] signup:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]">
-                <p>Total entry: {monthlyData.totalCount}</p>
-                <Bar data={monthlyData.data} options={monthlyOptions} />
-              </div>
-            ) : (
-              <div   className="w-[270px] h-[200px]  signup:h-[230px]  signup:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]">
-                <p>Total entry: {weeklyData.totalCount}</p>
-                <Bar data={weeklyData.data} options={weeklyOptions} />
-              </div>
-            )}
+            <p className="text-[#C38A72] text-[10px] font-semibold tracking-wider uppercase mb-1">Emotions</p>
+            <h3 className="font-serif text-xl font-semibold text-[#2D2A26]">Mood Tracking</h3>
           </div>
-        ) : (
-          <p>No data available</p>
-        )}
-      </div>
+          <div className="flex items-center gap-2 bg-[#FAF8F5] p-1 rounded-full border border-[#736E67]/[0.08]">
+            {viewButtons.map((btn) => (
+              <button
+                key={btn.key}
+                onClick={() => setView(btn.key)}
+                className={`py-2 px-4 rounded-full text-xs font-medium tracking-wide transition-all duration-300 ${view === btn.key
+                  ? "bg-[#7E8F7A] text-white shadow-sm"
+                  : "text-[#736E67] hover:text-[#2D2A26]"
+                  }`}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      <div className="pb-7">
         {moods && moods.length > 0 ? (
-          <div className="grid lg:grid-cols-2 gap-5">
-            <div>
-              {" "}
-              <h1>Good mood affectors</h1>
-              <div 
-                className="w-[270px] h-[200px]  signup:h-[200px] signup:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]"
-              >
-                <Bar data={bardata} options={options} />
-              </div>
-            </div>
-            <div>
-              {" "}
-              <h1>Bad mood affectors</h1>
-              <div 
-              className="w-[270px] h-[200px]  signup:h-[200px] signup:w-[280px] moodP:w-[450px] moodP:h-[200px] sm:w-[600px] sm:h-[300px]"
-              >
-                <Bar data={badMoodData} options={options} />
-              </div>
+          <div className="flex flex-col items-center">
+            <p className="text-[#2D2A26] font-serif text-2xl font-semibold mb-4">
+              {currentView.totalCount} <span className="text-base font-sans font-normal text-[#736E67]">entries</span>
+            </p>
+            <div className="w-full h-[250px] sm:h-[300px]">
+              <Bar data={currentView.data} options={makeOptions(currentView.title)} />
             </div>
           </div>
         ) : (
-          <p>No data available</p>
+          <p className="text-[#736E67]/60 text-sm font-light py-8 text-center">No data available</p>
         )}
       </div>
 
-     
+      {/* Activity Affectors Section */}
+      {moods && moods.length > 0 && (
+        <div className="pt-6 border-t border-[#736E67]/[0.08] space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Good mood */}
+            <div className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.06] p-5">
+              <p className="text-[#7E8F7A] text-[10px] font-semibold tracking-wider uppercase mb-1">Positive</p>
+              <h4 className="font-serif text-base font-semibold text-[#2D2A26] mb-4">Good Mood Factors</h4>
+              <div className="w-full h-[200px]">
+                <Bar data={goodBarData} options={activityChartOptions} />
+              </div>
+            </div>
+
+            {/* Bad mood */}
+            <div className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.06] p-5">
+              <p className="text-[#D66B6B] text-[10px] font-semibold tracking-wider uppercase mb-1">Negative</p>
+              <h4 className="font-serif text-base font-semibold text-[#2D2A26] mb-4">Bad Mood Factors</h4>
+              <div className="w-full h-[200px]">
+                <Bar data={badBarData} options={activityChartOptions} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
