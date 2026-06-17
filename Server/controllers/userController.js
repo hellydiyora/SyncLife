@@ -6,10 +6,13 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const Mailgen = require("mailgen");
 const otpGenerator = require("otp-generator");
+const { Resend } = require("resend");
 
 const secret = process.env.SECRET_KEY;
 const userEmail = process.env.EMAIL;
 const userPassword = process.env.PASSWORD;
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = new Resend(resendApiKey);
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, secret, { expiresIn: "3d" });
@@ -114,20 +117,6 @@ const sendSignupOtp = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    // Send email using nodemailer Gmail transporter
-    let config = {
-      service: "gmail",
-      auth: {
-        user: userEmail,
-        pass: userPassword,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    };
-
-    let transporter = nodemailer.createTransport(config);
-
     const mailGenerator = new Mailgen({
       theme: "default",
       product: {
@@ -147,22 +136,25 @@ const sendSignupOtp = async (req, res) => {
 
     const mail = mailGenerator.generate(response);
 
-    const message = {
-      from: userEmail,
-      to: email,
-      subject: "Verify Your Email - SyncLife Registration",
-      html: mail,
-    };
+    try {
+      const { data, error } = await resend.emails.send({
+        from: "SyncLife <onboarding@resend.dev>",
+        to: email,
+        subject: "Verify Your Email - SyncLife Registration",
+        html: mail,
+      });
 
-    transporter.sendMail(message, (error, info) => {
       if (error) {
-        console.error("Error sending signup verification email:", error);
-        res.status(500).json({ error: "Error sending verification email" });
-      } else {
-        console.log("Email sent successfully to:", email, "| Message ID:", info.messageId, "| Response:", info.response);
-        res.status(200).json({ message: "Verification code sent to your email" });
+        console.error("Error sending signup verification email via Resend:", error);
+        return res.status(500).json({ error: "Error sending verification email" });
       }
-    });
+
+      console.log("Email sent successfully to:", email, "| Message ID:", data?.id);
+      res.status(200).json({ message: "Verification code sent to your email" });
+    } catch (err) {
+      console.error("Resend API request exception:", err);
+      res.status(500).json({ error: "Error sending verification email" });
+    }
   } catch (error) {
     console.error("Error in sendSignupOtp:", error);
     res.status(400).json({ error: error.message });
@@ -240,19 +232,6 @@ const forgotUser = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    let config = {
-      service: "gmail",
-      auth: {
-        user: userEmail,
-        pass: userPassword,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    };
-
-    let transporter = nodemailer.createTransport(config);
-
     const mailGenerator = new Mailgen({
       theme: "default",
       product: {
@@ -273,24 +252,27 @@ const forgotUser = async (req, res) => {
 
     const mail = mailGenerator.generate(response);
 
-    const message = {
-      from: userEmail,
-      to: email,
-      subject: "Reset Password",
-      html: mail,
-    };
+    try {
+      const { data, error } = await resend.emails.send({
+        from: "SyncLife <onboarding@resend.dev>",
+        to: email,
+        subject: "Reset Password - SyncLife",
+        html: mail,
+      });
 
-    transporter.sendMail(message, (error, info) => {
       if (error) {
-        console.error("Error sending email:", error);
-        res.status(500).json({ error: "Error sending email" });
-      } else {
-        console.log("Password reset email sent successfully to:", email, "| Message ID:", info.messageId, "| Response:", info.response);
-        res.status(201).json({
-          email,
-        });
+        console.error("Error sending password reset email via Resend:", error);
+        return res.status(500).json({ error: "Error sending email" });
       }
-    });
+
+      console.log("Password reset email sent successfully to:", email, "| Message ID:", data?.id);
+      res.status(201).json({
+        email,
+      });
+    } catch (err) {
+      console.error("Resend API password reset exception:", err);
+      res.status(500).json({ error: "Error sending email" });
+    }
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: error.message });
