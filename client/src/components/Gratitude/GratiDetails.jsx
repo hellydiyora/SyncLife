@@ -148,7 +148,8 @@ const GratiDetails = ({ date, onClose }) => {
                       </p>
                     )}
                   </div>
-                  {isEditing ? (
+                  {/* Photo/attachment display and edit commented out entirely for now as requested */}
+                  {/* isEditing ? (
                     <div className="flex flex-col items-center gap-2 w-full md:w-64">
                       {entry.image && entry.image !== "blank.jpg" && (
                         <div className="w-full aspect-video sm:aspect-square rounded-2xl overflow-hidden shadow-md border border-[#736E67]/10 relative flex items-center justify-center bg-[#FAF8F5] dark:bg-[#282522]/40 opacity-70">
@@ -221,7 +222,7 @@ const GratiDetails = ({ date, onClose }) => {
                         )}
                       </div>
                     )
-                  )}
+                  )} */}
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4 border-t border-[#736E67]/[0.06]">

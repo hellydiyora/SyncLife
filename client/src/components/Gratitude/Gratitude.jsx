@@ -90,7 +90,9 @@ const Gratitude = () => {
           file: null,
         });
 
-        fileInputRef.current.value = "";
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       }
       fetchAndSetGratitude();
     } catch (error) {
@@ -144,7 +146,9 @@ const Gratitude = () => {
       file: null,
     });
 
-    fileInputRef.current.value = "";
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
     fetchAndSetGratitude();
   };
 
@@ -249,7 +253,8 @@ const Gratitude = () => {
                 />
               </div>
 
-              <div className="flex flex-col">
+              {/* Photo attachment commented out for now as requested */}
+              {/* <div className="flex flex-col">
                 <label className="text-[#736E67] text-xs font-semibold tracking-wider uppercase mb-1.5">
                   Attach an Image
                 </label>
@@ -260,7 +265,7 @@ const Gratitude = () => {
                   onChange={handleFileChange}
                   ref={fileInputRef}
                 />
-              </div>
+              </div> */}
 
               <button
                 type="submit"

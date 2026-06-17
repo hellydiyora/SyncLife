@@ -5,8 +5,6 @@ import {
   selectUser,
 } from "../../reducers/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
 import UserBar from "../UserProfile/UseBar";
 import ThemeToggle from "../ThemeToggle";
 
@@ -68,6 +66,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const fetchU = useSelector(selectUser);
   const sidebarRef = useRef(null);
+  const navbarRef = useRef(null);
 
   useEffect(() => {
     const getDetails = () => {
@@ -88,12 +87,12 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    if (isVisible || userOpen) {
+    if (userOpen) {
       document.documentElement.style.overflow = "hidden";
     } else {
       document.documentElement.style.overflow = "";
     }
-  }, [isVisible, userOpen]);
+  }, [userOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -117,6 +116,24 @@ const Navbar = () => {
     };
   }, [userOpen]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navbarRef.current && !navbarRef.current.contains(event.target)) {
+        setIsVisible(false);
+      }
+    };
+
+    if (isVisible) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isVisible]);
+
   const handleClick = () => {
     setUserOpen(!userOpen);
     setIsVisible(false);
@@ -132,7 +149,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 z-40 bg-[#FAF8F5]/80 backdrop-blur-md border-b border-[#736E67]/[0.06]">
+    <div ref={navbarRef} className="sticky top-0 z-40 bg-[#FAF8F5]/80 backdrop-blur-md border-b border-[#736E67]/[0.06]">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-12 py-4 relative">
         {/* Elegant Serif Logo */}
         <div>
@@ -205,9 +222,13 @@ const Navbar = () => {
             onClick={handleToggle}
           >
             {isVisible ? (
-              <CloseIcon fontSize="small" />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             ) : (
-              <MenuIcon fontSize="small" />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             )}
           </div>
         </div>
