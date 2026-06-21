@@ -2,6 +2,9 @@ import journal from "../images/journal.png";
 import habitT from '../images/habit.png';
 import gratitudeJ from '../images/gratitude.png';
 import moodT from '../images/mood.png';
+import dashboardImg from '../images/home2.jpg';
+import aiInsight from '../images/aiInsight.png';
+import dashboard from '../images/dashboard.png';
 
 const data = [
   {
@@ -31,8 +34,14 @@ const data = [
   {
     title: "AI Insights",
     description: "Your personal AI coach for smarter productivity.",
-    image: journal,
+    image: aiInsight,
     link: "/ai",
+  },
+  {
+    title: "Dashboard",
+    description: "See your progress across all modules at a glance.",
+    image: dashboard,
+    link: "/user",
   },
 ];
 

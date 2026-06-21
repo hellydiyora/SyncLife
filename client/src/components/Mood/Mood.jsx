@@ -13,6 +13,26 @@ import {
   setMoodData,
 } from "../../reducers/moodSlice";
 import ConfirmBox from "../ConfirmBox";
+import { feelings, weather, social, location, food, health, hobbies } from "../../assets/data/moodPage";
+
+const allIcons = [
+  ...feelings,
+  ...weather,
+  ...social,
+  ...location,
+  ...food,
+  ...health,
+  ...hobbies,
+];
+
+const getIconImage = (value) => {
+  if (!value) return null;
+  const match = allIcons.find(
+    (icon) => icon.value?.toLowerCase() === value?.toLowerCase()
+  );
+  return match ? match.image : null;
+};
+
 
 const Mood = () => {
   const dispatch = useDispatch();
@@ -122,7 +142,7 @@ const Mood = () => {
               {/* Feel badge */}
               <div className="flex items-center gap-2.5 bg-[#7E8F7A]/10 py-1.5 px-4 rounded-full border border-[#7E8F7A]/10">
                 <img
-                  src={filteredMood.feeling.image}
+                  src={getIconImage(filteredMood.feeling.value) || filteredMood.feeling.image}
                   alt={filteredMood.feeling.value}
                   className="h-5 w-5 object-contain"
                 />
@@ -157,7 +177,7 @@ const Mood = () => {
                         className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
                       >
                         <img
-                          src={emotion.image}
+                          src={getIconImage(emotion.value) || emotion.image}
                           alt={emotion.value}
                           className="h-8 w-8 object-contain"
                         />
@@ -175,7 +195,7 @@ const Mood = () => {
                         className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
                       >
                         <img
-                          src={emotion.image}
+                          src={getIconImage(emotion.value) || emotion.image}
                           alt={emotion.value}
                           className="h-8 w-8 object-contain"
                         />
@@ -193,7 +213,7 @@ const Mood = () => {
                         className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
                       >
                         <img
-                          src={emotion.image}
+                          src={getIconImage(emotion.value) || emotion.image}
                           alt={emotion.value}
                           className="h-8 w-8 object-contain"
                         />
@@ -211,7 +231,7 @@ const Mood = () => {
                         className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
                       >
                         <img
-                          src={emotion.image}
+                          src={getIconImage(emotion.value) || emotion.image}
                           alt={emotion.value}
                           className="h-8 w-8 object-contain"
                         />
@@ -229,7 +249,7 @@ const Mood = () => {
                         className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
                       >
                         <img
-                          src={emotion.image}
+                          src={getIconImage(emotion.value) || emotion.image}
                           alt={emotion.value}
                           className="h-8 w-8 object-contain"
                         />
@@ -247,7 +267,7 @@ const Mood = () => {
                         className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.05] p-3.5 flex flex-col items-center justify-center text-center gap-2"
                       >
                         <img
-                          src={emotion.image}
+                          src={getIconImage(emotion.value) || emotion.image}
                           alt={emotion.value}
                           className="h-8 w-8 object-contain"
                         />

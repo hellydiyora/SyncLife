@@ -131,9 +131,16 @@ const GratiCalender = ({ onDateClick, selectedDate }) => {
                         />
                       </div>
                     ) : (
-                      <span className="text-[13px] font-light text-[#2D2A26] select-none">
-                        {index + 1}
-                      </span>
+                      <div className={`w-10 h-10 flex flex-col items-center justify-center rounded-xl relative ${
+                        gratitudeEntry ? "bg-[#7E8F7A]/15 dark:bg-[#9EC49A]/20 text-[#5C6E58] dark:text-[#9EC49A] font-medium border border-[#7E8F7A]/25 dark:border-[#9EC49A]/30" : ""
+                      }`}>
+                        <span className={`text-[13px] select-none ${gratitudeEntry ? "text-[#5C6E58] dark:text-[#9EC49A] font-semibold" : "text-[#2D2A26] dark:text-[#FAF8F5]"}`}>
+                          {index + 1}
+                        </span>
+                        {gratitudeEntry && (
+                          <span className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-[#7E8F7A] dark:bg-[#9EC49A]"></span>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

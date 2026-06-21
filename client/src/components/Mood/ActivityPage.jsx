@@ -11,6 +11,7 @@ import { selectUser } from "../../reducers/authSlice";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 
 import {
+  feelings,
   food,
   health,
   hobbies,
@@ -18,6 +19,25 @@ import {
   social,
   weather,
 } from "../../assets/data/moodPage";
+
+const allIcons = [
+  ...feelings,
+  ...weather,
+  ...social,
+  ...location,
+  ...food,
+  ...health,
+  ...hobbies,
+];
+
+const getIconImage = (value) => {
+  if (!value) return null;
+  const match = allIcons.find(
+    (icon) => icon.value?.toLowerCase() === value?.toLowerCase()
+  );
+  return match ? match.image : null;
+};
+
 import Feeling from "./Feeling";
 import ConfirmBox from "../ConfirmBox";
 
@@ -285,7 +305,7 @@ const ActivityPage = ({ onClose, searchDate }) => {
             <div className="flex items-center gap-3 pb-3 border-b border-[#736E67]/[0.06]">
               <div className="w-10 h-10 bg-[#7E8F7A]/10 rounded-full flex items-center justify-center">
                 <img
-                  src={filteredMood.feeling.image}
+                  src={getIconImage(filteredMood.feeling.value) || filteredMood.feeling.image}
                   alt={filteredMood.feeling.value}
                   className="h-6 w-6 object-contain"
                 />
@@ -318,7 +338,7 @@ const ActivityPage = ({ onClose, searchDate }) => {
                   ) &&
                     filteredMood.activity[0].weather.map((emotion, index) => (
                       <div key={`w-${index}`} className="flex items-center gap-2 text-xs">
-                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <img src={getIconImage(emotion.value) || emotion.image} className="w-4 h-4 object-contain" alt="" />
                         <span className="text-[#2D2A26] font-light">{emotion.value}</span>
                       </div>
                     ))}
@@ -329,7 +349,7 @@ const ActivityPage = ({ onClose, searchDate }) => {
                   ) &&
                     filteredMood.activity[0].social.map((emotion, index) => (
                       <div key={`s-${index}`} className="flex items-center gap-2 text-xs">
-                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <img src={getIconImage(emotion.value) || emotion.image} className="w-4 h-4 object-contain" alt="" />
                         <span className="text-[#2D2A26] font-light">{emotion.value}</span>
                       </div>
                     ))}
@@ -340,7 +360,7 @@ const ActivityPage = ({ onClose, searchDate }) => {
                   ) &&
                     filteredMood.activity[0].location.map((emotion, index) => (
                       <div key={`l-${index}`} className="flex items-center gap-2 text-xs">
-                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <img src={getIconImage(emotion.value) || emotion.image} className="w-4 h-4 object-contain" alt="" />
                         <span className="text-[#2D2A26] font-light">{emotion.value}</span>
                       </div>
                     ))}
@@ -351,7 +371,7 @@ const ActivityPage = ({ onClose, searchDate }) => {
                   ) &&
                     filteredMood.activity[0].food.map((emotion, index) => (
                       <div key={`f-${index}`} className="flex items-center gap-2 text-xs">
-                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <img src={getIconImage(emotion.value) || emotion.image} className="w-4 h-4 object-contain" alt="" />
                         <span className="text-[#2D2A26] font-light">{emotion.value}</span>
                       </div>
                     ))}
@@ -362,7 +382,7 @@ const ActivityPage = ({ onClose, searchDate }) => {
                   ) &&
                     filteredMood.activity[0].health.map((emotion, index) => (
                       <div key={`h-${index}`} className="flex items-center gap-2 text-xs">
-                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <img src={getIconImage(emotion.value) || emotion.image} className="w-4 h-4 object-contain" alt="" />
                         <span className="text-[#2D2A26] font-light">{emotion.value}</span>
                       </div>
                     ))}
@@ -373,7 +393,7 @@ const ActivityPage = ({ onClose, searchDate }) => {
                   ) &&
                     filteredMood.activity[0].hobby.map((emotion, index) => (
                       <div key={`hb-${index}`} className="flex items-center gap-2 text-xs">
-                        <img src={emotion.image} className="w-4 h-4 object-contain" alt="" />
+                        <img src={getIconImage(emotion.value) || emotion.image} className="w-4 h-4 object-contain" alt="" />
                         <span className="text-[#2D2A26] font-light">{emotion.value}</span>
                       </div>
                     ))}
