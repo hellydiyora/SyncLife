@@ -303,22 +303,22 @@ const Habit = () => {
   const today = moment();
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FAF8F5] text-[#2D2A26] font-sans">
+    <div className="flex flex-col min-h-screen bg-[#FAF8F5] dark:bg-[#151311] text-[#2D2A26] dark:text-[#FAF8F5] font-sans transition-colors duration-300">
       <Confetti active={confettiActive} onClose={() => setConfettiActive(false)} />
       <Navbar />
 
       {/* Header */}
       <div className="py-12 px-6 max-w-7xl mx-auto w-full text-center">
-        <p className="text-[#C38A72] text-xs font-semibold tracking-[0.3em] uppercase mb-2">Routines</p>
-        <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-[#2D2A26]">
-          Goal<span className="text-[#7E8F7A] italic font-normal">Minder</span>
+        <p className="text-[#C38A72] dark:text-[#DCA086] text-xs font-semibold tracking-[0.3em] uppercase mb-2">Routines</p>
+        <h1 className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight">
+          Goal<span className="text-[#7E8F7A] dark:text-[#93A68F] italic font-normal">Minder</span>
         </h1>
       </div>
 
       <div className="max-w-7xl mx-auto w-full px-6 md:px-12 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start flex-grow">
         {/* Left Side Form */}
         <div className="lg:col-span-5 w-full flex flex-col items-center">
-          <div className="w-full bg-white rounded-2xl border border-[#736E67]/[0.08] shadow-sm p-6 sm:p-8 text-left">
+          <div className="w-full bg-white dark:bg-[#1E1C19] rounded-2xl border border-[#736E67]/[0.08] dark:border-[#FAF8F5]/[0.08] shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] p-6 sm:p-8 text-left">
             {updateFormVisible ? (
               <form onSubmit={handleUpdateClick} className="space-y-6">
                 <h3 className="font-serif text-xl font-semibold text-[#2D2A26] mb-2">
@@ -437,8 +437,8 @@ const Habit = () => {
         </div>
 
         {/* Right Side Column — Habits List */}
-        <div className="lg:col-span-7 w-full bg-white rounded-2xl border border-[#736E67]/[0.08] shadow-sm p-6 sm:p-8">
-          <h3 className="font-serif text-2xl font-semibold text-[#2D2A26] text-left pb-4 border-b border-[#736E67]/[0.06] mb-6">
+        <div className="lg:col-span-7 w-full bg-white dark:bg-[#1E1C19] rounded-2xl border border-[#736E67]/[0.08] dark:border-[#FAF8F5]/[0.08] shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] p-6 sm:p-8">
+          <h3 className="font-serif text-2xl font-semibold text-left pb-4 border-b border-[#736E67]/[0.06] dark:border-[#FAF8F5]/[0.06] mb-6">
             Active Habits
           </h3>
 
@@ -461,31 +461,31 @@ const Habit = () => {
                     .map((habit) => (
                       <div
                         key={habit._id}
-                        className="bg-[#FAF8F5] rounded-xl border border-[#736E67]/[0.06] p-5 hover:border-[#7E8F7A]/30 transition-all duration-300 flex flex-col justify-between group"
+                        className="bg-[#FAF8F5] dark:bg-[#282522] rounded-xl border border-[#736E67]/[0.06] dark:border-[#FAF8F5]/[0.06] p-5 hover:border-[#7E8F7A]/30 dark:hover:border-[#93A68F]/30 transition-all duration-300 flex flex-col justify-between group"
                       >
                         <div className="text-left mb-4">
-                          <h4 className="font-serif text-lg font-semibold text-[#2D2A26] capitalize">
+                          <h4 className="font-serif text-lg font-semibold capitalize">
                             {habit.name}
                           </h4>
-                          <p className="text-[#736E67] text-xs font-light mt-1">
+                          <p className="text-[#736E67] dark:text-[#9E988E] text-xs font-light mt-1">
                             {moment.utc(habit.startDate).format("MMM DD")} — {moment.utc(habit.endDate).format("MMM DD, YYYY")}
                           </p>
                         </div>
                         <div className="grid grid-cols-3 gap-2">
                           <button
-                            className="py-1.5 px-2 bg-white text-xs font-medium text-[#7E8F7A] border border-[#7E8F7A]/20 rounded-lg hover:bg-[#7E8F7A] hover:text-white transition duration-300 shadow-sm"
+                            className="py-1.5 px-2 bg-white dark:bg-[#1E1C19] text-xs font-medium text-[#7E8F7A] dark:text-[#93A68F] border border-[#7E8F7A]/20 dark:border-[#93A68F]/20 rounded-lg hover:bg-[#7E8F7A] hover:text-white transition duration-300 shadow-sm"
                             onClick={() => showHabitDetails(habit)}
                           >
                             Status
                           </button>
                           <button
-                            className="py-1.5 px-2 bg-white text-xs font-medium text-[#736E67] border border-[#736E67]/20 rounded-lg hover:border-[#2D2A26] hover:text-[#2D2A26] transition duration-300 shadow-sm"
+                            className="py-1.5 px-2 bg-white dark:bg-[#1E1C19] text-xs font-medium text-[#736E67] dark:text-[#9E988E] border border-[#736E67]/20 dark:border-[#9E988E]/20 rounded-lg hover:border-[#2D2A26] dark:hover:border-[#FAF8F5] hover:text-[#2D2A26] dark:hover:text-[#FAF8F5] transition duration-300 shadow-sm"
                             onClick={() => handleUpdateButtonClick(habit)}
                           >
                             Edit
                           </button>
                           <button
-                            className="py-1.5 px-2 bg-white text-xs font-medium text-[#D66B6B] border border-[#D66B6B]/20 rounded-lg hover:bg-[#D66B6B] hover:text-white transition duration-300 shadow-sm"
+                            className="py-1.5 px-2 bg-white dark:bg-[#1E1C19] text-xs font-medium text-[#D66B6B] border border-[#D66B6B]/20 rounded-lg hover:bg-[#D66B6B] hover:text-white transition duration-300 shadow-sm"
                             onClick={() => handleDeleteClick(habit._id)}
                           >
                             Delete
@@ -497,8 +497,8 @@ const Habit = () => {
 
               {/* Expired list block */}
               {habits && habits.filter((data) => moment.utc(data.endDate).isBefore(today)).length > 0 && (
-                <div className="pt-6 border-t border-[#736E67]/[0.08]">
-                  <h4 className="text-sm font-semibold tracking-wider text-[#736E67]/70 uppercase text-left mb-4">
+                <div className="pt-6 border-t border-[#736E67]/[0.08] dark:border-[#FAF8F5]/[0.06]">
+                  <h4 className="text-sm font-semibold tracking-wider text-[#736E67]/70 dark:text-[#9E988E]/70 uppercase text-left mb-4">
                     Expired Habits
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -508,31 +508,31 @@ const Habit = () => {
                         .map((habit) => (
                           <div
                             key={habit._id}
-                            className="bg-[#F4F1EC]/60 rounded-xl border border-[#736E67]/[0.06] p-5 flex flex-col justify-between opacity-70 hover:opacity-100 transition-opacity"
+                            className="bg-[#F4F1EC]/60 dark:bg-[#282522]/60 rounded-xl border border-[#736E67]/[0.06] dark:border-[#FAF8F5]/[0.06] p-5 flex flex-col justify-between opacity-70 hover:opacity-100 transition-opacity"
                           >
                             <div className="text-left mb-4">
-                              <h4 className="font-serif text-lg font-semibold text-[#736E67] capitalize line-through">
+                              <h4 className="font-serif text-lg font-semibold text-[#736E67] dark:text-[#9E988E] capitalize line-through">
                                 {habit.name}
                               </h4>
-                              <p className="text-[#736E67]/80 text-xs font-light mt-1">
+                              <p className="text-[#736E67]/80 dark:text-[#9E988E]/60 text-xs font-light mt-1">
                                 {moment.utc(habit.startDate).format("MMM DD")} — {moment.utc(habit.endDate).format("MMM DD, YYYY")} (Ended)
                               </p>
                             </div>
                             <div className="grid grid-cols-3 gap-2">
                               <button
-                                className="py-1.5 px-2 bg-white text-xs font-medium text-[#7E8F7A] border border-[#7E8F7A]/20 rounded-lg hover:bg-[#7E8F7A] hover:text-white transition duration-300"
+                                className="py-1.5 px-2 bg-white dark:bg-[#1E1C19] text-xs font-medium text-[#7E8F7A] dark:text-[#93A68F] border border-[#7E8F7A]/20 dark:border-[#93A68F]/20 rounded-lg hover:bg-[#7E8F7A] hover:text-white transition duration-300"
                                 onClick={() => showHabitDetails(habit)}
                               >
                                 Status
                               </button>
                               <button
-                                className="py-1.5 px-2 bg-white text-xs font-medium text-[#736E67] border border-[#736E67]/20 rounded-lg hover:border-[#2D2A26] hover:text-[#2D2A26] transition duration-300"
+                                className="py-1.5 px-2 bg-white dark:bg-[#1E1C19] text-xs font-medium text-[#736E67] dark:text-[#9E988E] border border-[#736E67]/20 dark:border-[#9E988E]/20 rounded-lg hover:border-[#2D2A26] dark:hover:border-[#FAF8F5] hover:text-[#2D2A26] dark:hover:text-[#FAF8F5] transition duration-300"
                                 onClick={() => handleUpdateButtonClick(habit)}
                               >
                                 Edit
                               </button>
                               <button
-                                className="py-1.5 px-2 bg-white text-xs font-medium text-[#D66B6B] border border-[#D66B6B]/20 rounded-lg hover:bg-[#D66B6B] hover:text-white transition duration-300"
+                                className="py-1.5 px-2 bg-white dark:bg-[#1E1C19] text-xs font-medium text-[#D66B6B] border border-[#D66B6B]/20 rounded-lg hover:bg-[#D66B6B] hover:text-white transition duration-300"
                                 onClick={() => handleDeleteClick(habit._id)}
                               >
                                 Delete

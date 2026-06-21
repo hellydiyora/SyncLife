@@ -40,14 +40,14 @@ const HabitDetails = ({ habit, onClose, onToggleCompletion }) => {
       onClick={onClose}
     >
       <div
-        className="bg-[#FAF8F5] rounded-3xl shadow-2xl border border-[#736E67]/10 w-full max-w-4xl overflow-hidden animate-scaleIn flex flex-col max-h-[85vh]"
+        className="bg-[#FAF8F5] dark:bg-[#1E1C19] rounded-3xl shadow-2xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.6)] border border-[#736E67]/10 dark:border-[#FAF8F5]/[0.08] w-full max-w-4xl overflow-hidden animate-scaleIn flex flex-col max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#736E67]/[0.08] px-6 py-5 bg-white">
+        <div className="flex items-center justify-between border-b border-[#736E67]/[0.08] dark:border-[#FAF8F5]/[0.06] px-6 py-5 bg-white dark:bg-[#1E1C19]">
           <div>
-            <p className="text-[#C38A72] text-[10px] font-semibold tracking-wider uppercase mb-0.5">Habit Details</p>
-            <h2 className="font-serif text-2xl font-semibold text-[#2D2A26] capitalize">
+            <p className="text-[#C38A72] dark:text-[#DCA086] text-[10px] font-semibold tracking-wider uppercase mb-0.5">Habit Details</p>
+            <h2 className="font-serif text-2xl font-semibold capitalize">
               {habit.name}
             </h2>
           </div>
@@ -62,7 +62,7 @@ const HabitDetails = ({ habit, onClose, onToggleCompletion }) => {
         </div>
 
         {/* Info Area */}
-        <div className="bg-[#FAF8F5] px-6 py-4 flex flex-wrap gap-x-8 gap-y-2 border-b border-[#736E67]/[0.04] text-sm text-[#736E67]">
+        <div className="bg-[#FAF8F5] dark:bg-[#151311] px-6 py-4 flex flex-wrap gap-x-8 gap-y-2 border-b border-[#736E67]/[0.04] dark:border-[#FAF8F5]/[0.04] text-sm text-[#736E67] dark:text-[#9E988E]">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-[#2D2A26]">Start Date:</span>
             <span className="font-light">{moment.utc(habit.startDate).format("MMMM DD, YYYY")}</span>
@@ -86,9 +86,9 @@ const HabitDetails = ({ habit, onClose, onToggleCompletion }) => {
               return (
                 <li
                   key={habitDate.date}
-                  className="bg-white rounded-2xl border border-[#736E67]/[0.06] p-4 flex flex-col items-center justify-between text-center gap-3 hover:shadow-sm transition-all duration-300"
+                  className="bg-white dark:bg-[#282522] rounded-2xl border border-[#736E67]/[0.06] dark:border-[#FAF8F5]/[0.06] p-4 flex flex-col items-center justify-between text-center gap-3 hover:shadow-sm dark:hover:shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-all duration-300"
                 >
-                  <span className="text-xs font-semibold text-[#736E67] tracking-wider">
+                  <span className="text-xs font-semibold text-[#736E67] dark:text-[#9E988E] tracking-wider">
                     {moment.utc(habitDate.date).format("MMM DD, YYYY")}
                   </span>
                   
