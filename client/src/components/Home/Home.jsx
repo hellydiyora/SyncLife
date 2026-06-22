@@ -12,9 +12,9 @@ const featureDetails = [
     color: "#7E8F7A",
     darkColor: "#93A68F",
     highlights: [
-      "Add tasks with priority levels",
+      "Add tasks for the day",
       "Check off completed items",
-      "Auto-sorted by active vs. done",
+      "Edit or delete tasks",
     ],
   },
   {
@@ -33,8 +33,8 @@ const featureDetails = [
     darkColor: "#E8C4A0",
     highlights: [
       "Log daily gratitude entries",
-      "Attach photos & PDFs",
       "Calendar with visual highlights",
+      "Have your digital diary in your phone",
     ],
   },
   {
@@ -166,20 +166,18 @@ const Home = () => {
                 <div
                   key={index}
                   onClick={() => handleCardClick(index)}
-                  className={`group rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 ease-out border ${
-                    isExpanded
+                  className={`group rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 ease-out border ${isExpanded
                       ? "bg-white dark:bg-[#1E1C19] border-[#7E8F7A]/30 dark:border-[#93A68F]/30 shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] ring-1 ring-[#7E8F7A]/10 dark:ring-[#93A68F]/10"
                       : "bg-white dark:bg-[#1E1C19] border-[#736E67]/[0.08] dark:border-[#FAF8F5]/[0.08] shadow-sm dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-md dark:hover:shadow-[0_8px_25px_rgba(0,0,0,0.4)] hover:-translate-y-1"
-                  }`}
+                    }`}
                 >
                   {/* Image section */}
                   <div className="relative h-44 overflow-hidden bg-[#F4F1EC] dark:bg-[#282522]">
                     <img
                       src={item.image}
                       alt={item.title}
-                      className={`w-full h-full object-cover transition-transform duration-700 ease-out ${
-                        isExpanded ? "scale-105" : "group-hover:scale-105"
-                      }`}
+                      className={`w-full h-full object-cover transition-transform duration-700 ease-out ${isExpanded ? "scale-105" : "group-hover:scale-105"
+                        }`}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-white/70 dark:from-[#1E1C19]/70 to-transparent"></div>
 
@@ -206,9 +204,8 @@ const Home = () => {
 
                       {/* Expand chevron */}
                       <svg
-                        className={`w-4 h-4 text-[#736E67] dark:text-[#9E988E] transition-transform duration-300 ${
-                          isExpanded ? "rotate-180" : ""
-                        }`}
+                        className={`w-4 h-4 text-[#736E67] dark:text-[#9E988E] transition-transform duration-300 ${isExpanded ? "rotate-180" : ""
+                          }`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -224,9 +221,8 @@ const Home = () => {
 
                     {/* Expandable details */}
                     <div
-                      className={`overflow-hidden transition-all duration-500 ease-out ${
-                        isExpanded ? "max-h-60 opacity-100 mt-4" : "max-h-0 opacity-0 mt-0"
-                      }`}
+                      className={`overflow-hidden transition-all duration-500 ease-out ${isExpanded ? "max-h-60 opacity-100 mt-4" : "max-h-0 opacity-0 mt-0"
+                        }`}
                     >
                       <div className="border-t border-[#736E67]/[0.08] dark:border-[#FAF8F5]/[0.08] pt-4 space-y-2">
                         {details?.highlights.map((point, i) => (
